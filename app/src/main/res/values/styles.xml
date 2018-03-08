@@ -1,0 +1,58 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">#FFFFFF</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="TextStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/colorFont</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:typeface">serif</item>
+    </style>
+
+    <style name="FaqText" parent="TextStyle">
+        <item name="android:padding">@dimen/dp_12</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="FaqTextQuestion" parent="FaqText">
+        <item name="android:drawablePadding">@dimen/dp_6</item>
+        <item name="android:drawableLeft">@mipmap/ic_help_black_24dp</item>
+    </style>
+
+    <style name="FaqTextAnswer" parent="FaqText">
+        <item name="android:textColor">@color/colorDarkGrey</item>
+    </style>
+
+    <style name="ButtonStyle" parent="Base.Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button_background</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/sp_12</item>
+        <item name="android:typeface">serif</item>
+        <item name="android:padding">@dimen/dp_12</item>
+    </style>
+
+</resources>

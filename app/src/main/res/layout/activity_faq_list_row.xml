@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/question"
+        style="@style/FaqTextQuestion"
+        android:clickable="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorFont"
+        android:focusable="true" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/answer"
+        style="@style/FaqTextAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorFont"
+        android:visibility="gone"/>
+
+</android.support.v7.widget.LinearLayoutCompat>

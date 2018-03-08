@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ru.scorpio92.vkmd2">
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar">
+
+        <activity
+            android:name=".presentation.view.activity.AuthActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".presentation.view.activity.SyncActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".presentation.view.activity.MusicActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".presentation.view.activity.DownloadManagerActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".presentation.view.activity.MusicActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".presentation.view.activity.MusicActivity" />
+        </activity>
+
+        <activity
+            android:name=".presentation.view.activity.SettingsActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".presentation.view.activity.MusicActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".presentation.view.activity.MusicActivity" />
+        </activity>
+
+        <activity
+            android:name=".presentation.view.activity.FaqActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".presentation.view.activity.MusicActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".presentation.view.activity.MusicActivity" />
+        </activity>
+
+        <service
+            android:name=".service.AudioService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name=".service.DownloadService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name=".service.SyncService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name="ru.scorpio92.vkmd2.receiver.AudioServiceNotificationReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="VKMD2.AUDIO_SERVICE.PREV" />
+                <action android:name="VKMD2.AUDIO_SERVICE.PLAY_PAUSE" />
+                <action android:name="VKMD2.AUDIO_SERVICE.NEXT" />
+                <action android:name="VKMD2.AUDIO_SERVICE.STOP" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="ru.scorpio92.vkmd2.receiver.DownloadServiceNotificationReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="VKMD2.DOWNLOAD_SERVICE.START_PAUSE" />
+                <action android:name="VKMD2.DOWNLOAD_SERVICE.STOP" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="ru.scorpio92.vkmd2.receiver.LockScreenReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+
+    </application>
+
+</manifest>

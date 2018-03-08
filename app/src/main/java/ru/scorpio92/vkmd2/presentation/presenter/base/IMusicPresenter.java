@@ -1,0 +1,17 @@
+package ru.scorpio92.vkmd2.presentation.presenter.base;
+
+import java.util.List;
+
+
+public interface IMusicPresenter extends IBasePresenter {
+
+    void getTrackList();
+
+    void getSavedTrackList();
+
+    void getOnlineTracks(CharSequence searchQuery);
+
+    void saveOfflineSearch(List<String> trackIdList);
+
+    void sendTracksForDownload(List<String> trackIdList);
+}
