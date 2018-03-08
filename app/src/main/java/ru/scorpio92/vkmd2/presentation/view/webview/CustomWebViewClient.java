@@ -17,7 +17,7 @@ public class CustomWebViewClient extends WebViewClient {
     public interface WebViewClientCallback {
         void onPageBeginLoading();
 
-        void onAuthPageLoaded(String cookie);
+        void onAuthPageLoaded();
 
         void onAudioPageFinishLoad(String cookie);
 
@@ -44,11 +44,11 @@ public class CustomWebViewClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         Logger.log("onPageFinished", url);
-        final String cookies = CookieManager.getInstance().getCookie(url);
         if (callback != null) {
             if (url.contains(LOGIN_URL)) {
-                callback.onAuthPageLoaded(cookies);
+                callback.onAuthPageLoaded();
             } else if (url.equals(AUDIO_URL)) {
+                final String cookies = CookieManager.getInstance().getCookie(url);
                 if(cookies == null) {
                     callback.onError();
                 } else {
@@ -56,11 +56,8 @@ public class CustomWebViewClient extends WebViewClient {
                 }
                 //view.loadUrl("javascript:console.log('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
             } else {
-                callback.onError();
+                callback.onAuthPageLoaded();
             }
         }
     }
-
-
-
 }

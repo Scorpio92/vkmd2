@@ -106,7 +106,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
 
     private CustomWebViewClient.WebViewClientCallback webViewClientCallback = new CustomWebViewClient.WebViewClientCallback() {
         @Override
-        public void onAuthPageLoaded(String cookie) {
+        public void onAuthPageLoaded() {
             showWebView();
         }
 
@@ -121,7 +121,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
                 LocalStorage.setDataInFile(AuthActivity.this, LocalStorage.COOKIE_STORAGE, cookie);
                 showSyncActivity(cookie);
             } catch (Exception e) {
-                Logger.error(e);
+                onError();
             }
         }
 
