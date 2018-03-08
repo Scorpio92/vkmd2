@@ -393,14 +393,16 @@ public class AudioService extends Service implements
             intent.putExtra(SERVICE_EVENT, event.name());
             switch (event) {
                 case PROVIDE_INFO:
-                    intent.putExtra(AUDIO_TRACK_ID_PARAM, currentTrack.getTrackId());
-                    intent.putExtra(AUDIO_TRACK_POSITION_PARAM, currentTrackPosition);
-                    intent.putExtra(AUDIO_TRACK_NAME_PARAM, currentTrack.getName());
-                    intent.putExtra(AUDIO_TRACK_ARTIST_PARAM, currentTrack.getArtist());
-                    intent.putExtra(AUDIO_TRACK_DURATION_PARAM, currentTrack.getDuration());
-                    intent.putExtra(AUDIO_TRACK_IMAGE_URL_PARAM, currentTrack.getUrlImage());
-                    intent.putExtra(AUDIO_TRACK_PROGRESS_PARAM, mediaPlayer.getCurrentPosition());
-                    intent.putExtra(AUDIO_TRACK_IS_PLAY_PARAM, mediaPlayer.isPlaying());
+                    if(currentTrack != null) {
+                        intent.putExtra(AUDIO_TRACK_ID_PARAM, currentTrack.getTrackId());
+                        intent.putExtra(AUDIO_TRACK_POSITION_PARAM, currentTrackPosition);
+                        intent.putExtra(AUDIO_TRACK_NAME_PARAM, currentTrack.getName());
+                        intent.putExtra(AUDIO_TRACK_ARTIST_PARAM, currentTrack.getArtist());
+                        intent.putExtra(AUDIO_TRACK_DURATION_PARAM, currentTrack.getDuration());
+                        intent.putExtra(AUDIO_TRACK_IMAGE_URL_PARAM, currentTrack.getUrlImage());
+                        intent.putExtra(AUDIO_TRACK_PROGRESS_PARAM, mediaPlayer.getCurrentPosition());
+                        intent.putExtra(AUDIO_TRACK_IS_PLAY_PARAM, mediaPlayer.isPlaying());
+                    }
                     break;
                 case PREPARE_FOR_PLAY:
                     intent.putExtra(AUDIO_TRACK_ID_PARAM, currentTrack.getTrackId());
