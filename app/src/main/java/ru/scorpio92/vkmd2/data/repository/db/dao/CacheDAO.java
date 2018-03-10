@@ -45,4 +45,7 @@ public interface CacheDAO {
 
     @Query("SELECT * FROM DownloadTable WHERE trackId == :trackId")
     CachedTrack getTrackByTrackId(String trackId);
+
+    @Query("SELECT id FROM DownloadTable ORDER BY id DESC LIMIT 1")
+    int getLastRowId();
 }

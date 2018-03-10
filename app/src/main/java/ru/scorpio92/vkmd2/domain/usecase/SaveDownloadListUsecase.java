@@ -36,7 +36,7 @@ public class SaveDownloadListUsecase extends AbstractUsecase {
     public void run() {
         try {
             List<CachedTrack> downloadFiles = new ArrayList<>();
-            int idx = AppDatabase.getInstance().cacheDAO().getSavedTracksCount() + 1;
+            int idx = AppDatabase.getInstance().cacheDAO().getLastRowId() + 1;
 
             //ищем объект для скачивания в нужной таблице
             for (String trackId : trackIdList) {
