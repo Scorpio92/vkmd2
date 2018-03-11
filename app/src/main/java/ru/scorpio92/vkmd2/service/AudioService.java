@@ -27,7 +27,6 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 import java.util.Timer;
 
 import ru.scorpio92.vkmd2.R;
@@ -89,7 +88,7 @@ public class AudioService extends Service implements
         ERROR
     }
 
-    public final static String AUDIO_TRACK_POSITION_PARAM = "TRACK_POSITION";
+    //public final static String AUDIO_TRACK_POSITION_PARAM = "TRACK_POSITION";
     public final static String AUDIO_TRACK_NAME_PARAM = "TRACK_NAME";
     public final static String AUDIO_TRACK_ARTIST_PARAM = "TRACK_ARTIST";
     public final static String AUDIO_TRACK_DURATION_PARAM = "TRACK_DURATION";
@@ -105,7 +104,6 @@ public class AudioService extends Service implements
 
     private MediaPlayer mediaPlayer;
     private Track currentTrack;
-    private int currentTrackPosition = -1;
     private Timer timer;
     private boolean loopIsEnabled;
     private boolean randomIsEnabled;
@@ -249,10 +247,9 @@ public class AudioService extends Service implements
                             if (track == null)
                                 throw new NullPointerException();
 
-                            if (currentTrackPosition != track.getId()) {
+                            if (currentTrack == null || !currentTrack.getTrackId().equals(track.getTrackId())) {
                                 currentTrack = track;
-                                currentTrackPosition = track.getId();
-                                Logger.log("PLAY, currentTrackPosition: " + currentTrackPosition);
+                                Logger.log("PLAY, currentTrackId: " + currentTrack.getTrackId());
                                 preparePlayerForPlay();
                             }
                         } else {
@@ -268,21 +265,13 @@ public class AudioService extends Service implements
                 break;
 
             case NEXT:
-                if (randomIsEnabled) {
-                    int tracksCount = trackProvider.getTracksCount();
-                    currentTrackPosition = new Random().nextInt(tracksCount) + 1;
-                } else {
-                    currentTrackPosition++;
-                }
-
-                Track nextTrack = trackProvider.getTrackByPosition(currentTrackPosition);
+                trackProvider.setRandomEnabled(randomIsEnabled);
+                Track nextTrack = trackProvider.getNextTrack(currentTrack);
                 if (nextTrack != null) {
                     this.currentTrack = nextTrack;
                     preparePlayerForPlay();
                 } else {
-                    currentTrackPosition--;
                     mediaPlayer.pause();
-
                     sendBroadcastToActivity(EVENT.PAUSE);
                 }
 
@@ -290,15 +279,12 @@ public class AudioService extends Service implements
                 break;
 
             case PREV:
-                currentTrackPosition--;
-                Track prevTrack = trackProvider.getTrackByPosition(currentTrackPosition);
+                Track prevTrack = trackProvider.getPreviousTrack(currentTrack);
                 if (prevTrack != null) {
                     this.currentTrack = prevTrack;
                     preparePlayerForPlay();
                 } else {
-                    currentTrackPosition++;
                     mediaPlayer.pause();
-
                     sendBroadcastToActivity(EVENT.PAUSE);
                 }
                 sentNotificationInForeground();
@@ -340,11 +326,11 @@ public class AudioService extends Service implements
     }
 
     private void initTrackProvider(String provider) {
-        if(provider == null)
+        if (provider == null)
             return;
 
-        //if (trackProvider == null)
-            trackProvider = new TrackProvider(Enum.valueOf(TrackProvider.PROVIDER.class, provider));
+        trackProvider = new TrackProvider(Enum.valueOf(TrackProvider.PROVIDER.class, provider));
+        trackProvider.setRandomEnabled(randomIsEnabled);
     }
 
     private void stop() {
@@ -393,9 +379,8 @@ public class AudioService extends Service implements
             intent.putExtra(SERVICE_EVENT, event.name());
             switch (event) {
                 case PROVIDE_INFO:
-                    if(currentTrack != null) {
+                    if (currentTrack != null) {
                         intent.putExtra(AUDIO_TRACK_ID_PARAM, currentTrack.getTrackId());
-                        intent.putExtra(AUDIO_TRACK_POSITION_PARAM, currentTrackPosition);
                         intent.putExtra(AUDIO_TRACK_NAME_PARAM, currentTrack.getName());
                         intent.putExtra(AUDIO_TRACK_ARTIST_PARAM, currentTrack.getArtist());
                         intent.putExtra(AUDIO_TRACK_DURATION_PARAM, currentTrack.getDuration());
@@ -406,7 +391,6 @@ public class AudioService extends Service implements
                     break;
                 case PREPARE_FOR_PLAY:
                     intent.putExtra(AUDIO_TRACK_ID_PARAM, currentTrack.getTrackId());
-                    intent.putExtra(AUDIO_TRACK_POSITION_PARAM, currentTrackPosition);
                     intent.putExtra(AUDIO_TRACK_NAME_PARAM, currentTrack.getName());
                     intent.putExtra(AUDIO_TRACK_ARTIST_PARAM, currentTrack.getArtist());
                     intent.putExtra(AUDIO_TRACK_DURATION_PARAM, currentTrack.getDuration());

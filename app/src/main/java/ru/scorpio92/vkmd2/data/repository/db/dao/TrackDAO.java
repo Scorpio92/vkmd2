@@ -30,4 +30,7 @@ public interface TrackDAO {
 
     @Query("SELECT * FROM MusicTable WHERE id == :position")
     Track getTrackByPosition(int position);
+
+    @Query("SELECT trackId FROM MusicTable")
+    List<String> getTrackIdList();
 }

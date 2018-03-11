@@ -30,4 +30,7 @@ public interface OfflineSearchDAO {
 
     @Query("SELECT * FROM OfflineSearchTable WHERE id == :id")
     OfflineSearchItem getOfflineSearchItemById(int id);
+
+    @Query("SELECT trackId FROM OfflineSearchTable")
+    List<String> getTrackIdList();
 }

@@ -7,11 +7,14 @@ import ru.scorpio92.vkmd2.data.entity.Track;
 
 public interface ITrackProvider {
 
-    int getTracksCount();
-
     @Nullable
     Track getTrackByTrackId(String trackId);
 
     @Nullable
-    Track getTrackByPosition(int position);
+    Track getPreviousTrack(Track currentTrack);
+
+    @Nullable
+    Track getNextTrack(Track currentTrack);
+
+    void setRandomEnabled(boolean randomEnabled);
 }

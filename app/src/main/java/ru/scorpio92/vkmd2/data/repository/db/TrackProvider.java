@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import ru.scorpio92.vkmd2.data.entity.CachedTrack;
 import ru.scorpio92.vkmd2.data.entity.Track;
@@ -27,86 +28,148 @@ public class TrackProvider implements ITrackProvider {
 
     private PROVIDER provider;
     private AppDatabase appDatabase;
-    private List<Track> savedTracksCache;
+
+    private boolean randomEnabled;
+
 
     public TrackProvider(PROVIDER provider) {
         Logger.log("TrackProvider", provider.name());
         this.provider = provider;
         this.appDatabase = AppDatabase.getInstance();
-        this.savedTracksCache = new ArrayList<>();
-
-        if (provider == PROVIDER.SAVED_TABLE) {
-            try {
-                List<CachedTrack> cachedTrackList = appDatabase.cacheDAO().getSavedTracks();
-                for (CachedTrack cachedTrack : cachedTrackList)
-                    savedTracksCache.add(VkmdUtils.convertCachedTrackToBase(cachedTrack));
-            } catch (Exception e) {
-                Logger.error(e);
-            }
-        }
     }
 
-    @Override
-    public int getTracksCount() {
-        switch (provider) {
-            case SAVED_TABLE:
-                return appDatabase.cacheDAO().getSavedTracksCount();
-            case ACCOUNT_TABLE:
-                return appDatabase.trackDAO().getTracksCount();
-            case ONLINE_SEARCH_TABLE:
-                return appDatabase.onlineTrackDAO().getTracksCount();
-            case OFFLINE_SEARCH_TABLE:
-                return appDatabase.offlineSearchDAO().getTracksCount();
-            default:
-                return 0;
-        }
-    }
 
     @Nullable
     @Override
     public Track getTrackByTrackId(String trackId) {
+        Track track = null;
         try {
             switch (provider) {
                 case SAVED_TABLE:
-                    return VkmdUtils.convertCachedTrackToBase(appDatabase.cacheDAO().getTrackByTrackId(trackId));
+                    track = VkmdUtils.convertCachedTrackToBase(appDatabase.cacheDAO().getTrackByTrackId(trackId));
+                    break;
                 case ACCOUNT_TABLE:
-                    return getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByTrackId(trackId));
+                    track = getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByTrackId(trackId));
+                    break;
                 case ONLINE_SEARCH_TABLE:
-                    return getTrackWithSaveInfo(VkmdUtils.convertOnlineTrackToBase(appDatabase.onlineTrackDAO().getTrackByTrackId(trackId)));
+                    track = getTrackWithSaveInfo(VkmdUtils.convertOnlineTrackToBase(appDatabase.onlineTrackDAO().getTrackByTrackId(trackId)));
+                    break;
                 case OFFLINE_SEARCH_TABLE:
                     Integer pos = appDatabase.offlineSearchDAO().getOfflineSearchItemByTrackId(trackId).getId();
-                    Track track = getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByTrackId(trackId));
+                    track = getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByTrackId(trackId));
                     track.setId(pos);
-                    return track;
+                    break;
             }
         } catch (Exception e) {
             Logger.error(e);
         }
-        return null;
+        return track;
     }
-
 
     @Nullable
     @Override
-    public Track getTrackByPosition(int position) {
+    public Track getPreviousTrack(Track currentTrack) {
+        Track track = null;
         try {
+            int currentTrackPosition = currentTrack.getId() - 1;
             switch (provider) {
                 case SAVED_TABLE:
-                    return savedTracksCache.get(position - 1);
+                    CachedTrack cachedTrack = AppDatabase.getInstance().cacheDAO().getPrevious(currentTrack.getId());
+                    if (cachedTrack != null)
+                        track = VkmdUtils.convertCachedTrackToBase(cachedTrack);
+                    break;
                 case ACCOUNT_TABLE:
-                    return getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByPosition(position));
+                    track = getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByPosition(currentTrackPosition));
+                    break;
                 case ONLINE_SEARCH_TABLE:
-                    return getTrackWithSaveInfo(VkmdUtils.convertOnlineTrackToBase(appDatabase.onlineTrackDAO().getTrackByPosition(position)));
+                    track = getTrackWithSaveInfo(VkmdUtils.convertOnlineTrackToBase(appDatabase.onlineTrackDAO().getTrackByPosition(currentTrackPosition)));
+                    break;
                 case OFFLINE_SEARCH_TABLE:
-                    String trackId = appDatabase.offlineSearchDAO().getOfflineSearchItemById(position).getTrackId();
-                    Track track = appDatabase.trackDAO().getTrackByTrackId(trackId);
-                    track.setId(position);
-                    return track;
+                    String trackId = appDatabase.offlineSearchDAO().getOfflineSearchItemById(currentTrackPosition).getTrackId();
+                    track = appDatabase.trackDAO().getTrackByTrackId(trackId);
+                    track.setId(currentTrackPosition);
+                    break;
             }
         } catch (Exception e) {
             Logger.error(e);
         }
-        return null;
+
+        return track;
+    }
+
+    @Nullable
+    @Override
+    public Track getNextTrack(Track currentTrack) {
+        Track track = null;
+        try {
+            int currentTrackPosition = currentTrack.getId() + 1;
+            switch (provider) {
+                case SAVED_TABLE:
+                    CachedTrack cachedTrack = null;
+                    if (randomEnabled) {
+                        cachedTrack = AppDatabase.getInstance().cacheDAO().getTrackByTrackId(getRandomTrackId());
+                    } else {
+                        AppDatabase.getInstance().cacheDAO().getNext(currentTrack.getId());
+                    }
+                    if (cachedTrack != null)
+                        track = VkmdUtils.convertCachedTrackToBase(cachedTrack);
+                    break;
+                case ACCOUNT_TABLE:
+                    if (randomEnabled) {
+                        track = getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByTrackId(getRandomTrackId()));
+                    } else {
+                        track = getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByPosition(currentTrackPosition));
+                    }
+                    break;
+                case ONLINE_SEARCH_TABLE:
+                    if (randomEnabled) {
+                        track = getTrackWithSaveInfo(VkmdUtils.convertOnlineTrackToBase(appDatabase.onlineTrackDAO().getTrackByTrackId(getRandomTrackId())));
+                    } else {
+                        track = getTrackWithSaveInfo(VkmdUtils.convertOnlineTrackToBase(appDatabase.onlineTrackDAO().getTrackByPosition(currentTrackPosition)));
+                    }
+                    break;
+                case OFFLINE_SEARCH_TABLE:
+                    String trackId;
+                    if (randomEnabled) {
+                        trackId = getRandomTrackId();
+                    } else {
+                        trackId = appDatabase.offlineSearchDAO().getOfflineSearchItemById(currentTrackPosition).getTrackId();
+                    }
+                    track = appDatabase.trackDAO().getTrackByTrackId(trackId);
+                    track.setId(currentTrackPosition);
+                    break;
+            }
+        } catch (Exception e) {
+            Logger.error(e);
+        }
+
+        return track;
+    }
+
+    @Override
+    public void setRandomEnabled(boolean randomEnabled) {
+        this.randomEnabled = randomEnabled;
+    }
+
+    private String getRandomTrackId() {
+        Random random = new Random();
+        List<String> trackIdList = new ArrayList<>();
+        switch (provider) {
+            case SAVED_TABLE:
+                trackIdList.addAll(AppDatabase.getInstance().cacheDAO().getTrackIdList());
+                break;
+            case ACCOUNT_TABLE:
+                trackIdList.addAll(AppDatabase.getInstance().trackDAO().getTrackIdList());
+                break;
+            case ONLINE_SEARCH_TABLE:
+                trackIdList.addAll(AppDatabase.getInstance().onlineTrackDAO().getTrackIdList());
+                break;
+            case OFFLINE_SEARCH_TABLE:
+                trackIdList.addAll(AppDatabase.getInstance().offlineSearchDAO().getTrackIdList());
+                break;
+        }
+        int randomPosition = random.nextInt(trackIdList.size());
+        return trackIdList.get(randomPosition);
     }
 
     private Track getTrackWithSaveInfo(Track track) {

@@ -31,4 +31,7 @@ public interface OnlineTrackDAO {
 
     @Query("SELECT * FROM OnlineSearchTable WHERE id == :position")
     OnlineTrack getTrackByPosition(int position);
+
+    @Query("SELECT trackId FROM OnlineSearchTable")
+    List<String> getTrackIdList();
 }

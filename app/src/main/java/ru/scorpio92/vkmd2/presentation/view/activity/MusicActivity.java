@@ -593,6 +593,10 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
     }
 
     private void onOfflineModeCheck() {
+        //т.к. аудиосервис перезапускается, настройки лупа и рандома сбрасываются, то надо поменять их цвет на дефолтный
+        loopBtn.setColorFilter(getResources().getColor(android.R.color.black));
+        randomBtn.setColorFilter(getResources().getColor(android.R.color.black));
+
         if (offlineMode) {
             toolbarHeader.setVisibility(View.GONE);
             onlineSearch.setChecked(false);
