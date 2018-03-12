@@ -1,9 +1,12 @@
 package ru.scorpio92.vkmd2.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
@@ -16,9 +19,8 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v7.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.widget.RemoteViews;
@@ -34,6 +36,7 @@ import ru.scorpio92.vkmd2.data.entity.Track;
 import ru.scorpio92.vkmd2.data.repository.db.TrackProvider;
 import ru.scorpio92.vkmd2.data.repository.db.base.ITrackProvider;
 import ru.scorpio92.vkmd2.presentation.view.activity.MusicActivity;
+import ru.scorpio92.vkmd2.receiver.AudioServiceNotificationReceiver;
 import ru.scorpio92.vkmd2.receiver.HeadsetPlugReceiver;
 import ru.scorpio92.vkmd2.receiver.LockScreenReceiver;
 import ru.scorpio92.vkmd2.tools.Logger;
@@ -500,6 +503,11 @@ public class AudioService extends Service implements
         }
     }
 
+    private static final String channelId = "vkmd2_channel";
+    private static final String channelName = "Channel VKMD2";
+    private NotificationManager notificationManager;
+    private NotificationChannel mChannel;
+
     private void sentNotificationInForeground() {
         try {
             if (currentTrack != null) {
@@ -510,12 +518,24 @@ public class AudioService extends Service implements
                 Intent notificationIntent = new Intent(this, MusicActivity.class);
 
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-                PendingIntent pendingIntentPlayPause = PendingIntent.getBroadcast(this, 0, new Intent().setAction(NOTIFICATION_ACTION_PLAY_PAUSE), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent pendingIntentStop = PendingIntent.getBroadcast(this, 0, new Intent().setAction(NOTIFICATION_ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent pendingIntentPrev = PendingIntent.getBroadcast(this, 0, new Intent().setAction(NOTIFICATION_ACTION_PREV), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent pendingIntentNext = PendingIntent.getBroadcast(this, 0, new Intent().setAction(NOTIFICATION_ACTION_NEXT), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntentPlayPause = PendingIntent.getBroadcast(this, 0, new Intent(this, AudioServiceNotificationReceiver.class).setAction(NOTIFICATION_ACTION_PLAY_PAUSE), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntentStop = PendingIntent.getBroadcast(this, 0, new Intent(this, AudioServiceNotificationReceiver.class).setAction(NOTIFICATION_ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntentPrev = PendingIntent.getBroadcast(this, 0, new Intent(this, AudioServiceNotificationReceiver.class).setAction(NOTIFICATION_ACTION_PREV), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntentNext = PendingIntent.getBroadcast(this, 0, new Intent(this, AudioServiceNotificationReceiver.class).setAction(NOTIFICATION_ACTION_NEXT), PendingIntent.FLAG_UPDATE_CURRENT);
 
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+                if (notificationManager == null) {
+                    notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                }
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    if (mChannel == null) {
+                        mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+                        notificationManager.createNotificationChannel(mChannel);
+                    }
+                }
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
 
                 RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.audio_service_notification);
 
@@ -543,8 +563,6 @@ public class AudioService extends Service implements
                 builder.setCustomBigContentView(contentView);
                 builder.setSmallIcon(R.mipmap.ic_music_note_black_24dp);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    MediaSessionCompat mMediaSession = new MediaSessionCompat(getApplicationContext(), "mMediaSessionTag");
-                    builder.setStyle(new NotificationCompat.MediaStyle().setMediaSession(mMediaSession.getSessionToken()));
                     builder.setVisibility(Notification.VISIBILITY_PUBLIC);
                 }
                 builder.setPriority(Notification.PRIORITY_MAX);
