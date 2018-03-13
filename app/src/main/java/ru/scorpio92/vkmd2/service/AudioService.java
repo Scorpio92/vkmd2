@@ -530,7 +530,11 @@ public class AudioService extends Service implements
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     if (mChannel == null) {
-                        mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+                        mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+                        mChannel.enableVibration(false);
+                        mChannel.setVibrationPattern(null);
+                        mChannel.enableLights(false);
+                        mChannel.setSound(null, null);
                         notificationManager.createNotificationChannel(mChannel);
                     }
                 }
@@ -565,7 +569,10 @@ public class AudioService extends Service implements
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     builder.setVisibility(Notification.VISIBILITY_PUBLIC);
                 }
-                builder.setPriority(Notification.PRIORITY_MAX);
+                builder.setPriority(Notification.PRIORITY_DEFAULT);
+                builder.setOnlyAlertOnce(true);
+                builder.setSound(null);
+                builder.setVibrate(null);
 
                 Notification notification = builder.build();
 
