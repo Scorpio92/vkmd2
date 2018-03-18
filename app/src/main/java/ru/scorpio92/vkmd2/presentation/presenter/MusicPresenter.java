@@ -8,7 +8,10 @@ import ru.scorpio92.vkmd2.domain.usecase.GetSavedTrackListUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.GetTrackListFromDBUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.SaveDownloadListUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.SaveOfflineSearchUsecase;
+import ru.scorpio92.vkmd2.domain.usecase.base.CompletableObserver;
+import ru.scorpio92.vkmd2.domain.usecase.base.ErrorObserver;
 import ru.scorpio92.vkmd2.domain.usecase.base.IAbstractUsecase;
+import ru.scorpio92.vkmd2.domain.usecase.base.SingleObserver;
 import ru.scorpio92.vkmd2.presentation.presenter.base.AbstractPresenter;
 import ru.scorpio92.vkmd2.presentation.presenter.base.IMusicPresenter;
 import ru.scorpio92.vkmd2.presentation.view.activity.base.IMusicActivity;
@@ -19,10 +22,15 @@ import ru.scorpio92.vkmd2.tools.Logger;
 public class MusicPresenter extends AbstractPresenter<IMusicActivity> implements IMusicPresenter {
 
     private IAbstractUsecase getOnlineTracksUsecase;
-    private IAbstractUsecase saveOfflineSearchUsecase;
+    private GetTrackListFromDBUsecase getTrackListFromDBUsecase;
+    private GetSavedTrackListUsecase getSavedTrackListUsecase;
+    private SaveOfflineSearchUsecase saveOfflineSearchUsecase;
+    private SaveDownloadListUsecase saveDownloadListUsecase;
 
     public MusicPresenter(IMusicActivity view) {
         super(view);
+        getTrackListFromDBUsecase = new GetTrackListFromDBUsecase();
+        getSavedTrackListUsecase = new GetSavedTrackListUsecase();
     }
 
     @Override
@@ -35,56 +43,54 @@ public class MusicPresenter extends AbstractPresenter<IMusicActivity> implements
     public void getTrackList() {
         getView().showProgress(true);
 
-        GetTrackListFromDBUsecase getTrackListFromDBUsecase = new GetTrackListFromDBUsecase(new GetTrackListFromDBUsecase.UsecaseCallback() {
+        getTrackListFromDBUsecase.execute(new SingleObserver<List<Track>>() {
             @Override
-            public void onComplete(List<Track> trackList) {
+            public void onNext(List<Track> tracks) {
                 if (checkViewState()) {
                     getView().showProgress(false);
-                    getView().showTrackList(trackList);
+                    getView().showTrackList(tracks);
                 }
             }
 
             @Override
-            public void onError(Exception e) {
-                Logger.error(e);
+            public void onError(Throwable e) {
+                Logger.error((Exception) e);
                 if (checkViewState()) {
                     getView().showProgress(false);
                     getView().showToast("Что-то пошло не так...");
                 }
             }
         });
-        getTrackListFromDBUsecase.execute();
     }
 
     @Override
     public void getSavedTrackList() {
         getView().showProgress(true);
 
-        GetSavedTrackListUsecase getSavedTrackListUsecase = new GetSavedTrackListUsecase(new GetSavedTrackListUsecase.UsecaseCallback() {
+        getSavedTrackListUsecase.execute(new SingleObserver<List<Track>>() {
             @Override
-            public void onComplete(List<Track> trackList) {
+            public void onNext(List<Track> tracks) {
                 if (checkViewState()) {
                     getView().showProgress(false);
-                    getView().showTrackList(trackList);
+                    getView().showTrackList(tracks);
                 }
             }
 
             @Override
-            public void onError(Exception e) {
-                Logger.error(e);
+            public void onError(Throwable e) {
+                Logger.error((Exception) e);
                 if (checkViewState()) {
                     getView().showProgress(false);
                     getView().showToast("Что-то пошло не так...");
                 }
             }
         });
-        getSavedTrackListUsecase.execute();
     }
 
     @Override
     public void getOnlineTracks(CharSequence searchQuery) {
         String searchString = searchQuery.toString().trim();
-        if(searchString.length() >= 3) {
+        if (searchString.length() >= 3) {
             try {
                 cancelUsecases();
                 String uid = LocalStorage.getDataFromFile(getView().getViewContext(), LocalStorage.USER_ID_STORAGE);
@@ -123,43 +129,42 @@ public class MusicPresenter extends AbstractPresenter<IMusicActivity> implements
     public void saveOfflineSearch(List<String> trackIdList) {
         cancelUsecases();
 
-        saveOfflineSearchUsecase = new SaveOfflineSearchUsecase(trackIdList, new SaveOfflineSearchUsecase.UsecaseCallback() {
+        saveOfflineSearchUsecase = new SaveOfflineSearchUsecase(trackIdList);
+        saveOfflineSearchUsecase.execute(new ErrorObserver() {
             @Override
-            public void onComplete() {
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Logger.error(e);
+            public void onError(Throwable e) {
+                Logger.error((Exception) e);
             }
         });
-        saveOfflineSearchUsecase.execute();
     }
 
     @Override
     public void sendTracksForDownload(List<String> trackIdList) {
         getView().showPrepareForDownload();
 
-        SaveDownloadListUsecase saveDownloadListUsecase = new SaveDownloadListUsecase(trackIdList, new SaveDownloadListUsecase.UsecaseCallback() {
+        saveDownloadListUsecase = new SaveDownloadListUsecase(trackIdList);
+        saveDownloadListUsecase.execute(new CompletableObserver() {
             @Override
-            public void onComplete() {
-                if(getView() != null)
-                    getView().startDownloadService();
+            public void onError(Throwable e) {
+                Logger.error((Exception) e);
             }
 
             @Override
-            public void onError(Exception e) {
-                Logger.error(e);
+            public void onComplete() {
+                if (getView() != null)
+                    getView().startDownloadService();
             }
         });
-        saveDownloadListUsecase.execute();
     }
 
     private void cancelUsecases() {
-        if(getOnlineTracksUsecase != null)
+        getSavedTrackListUsecase.cancel();
+        getTrackListFromDBUsecase.cancel();
+        if (getOnlineTracksUsecase != null)
             getOnlineTracksUsecase.cancel();
-        if(saveOfflineSearchUsecase != null)
+        if (saveOfflineSearchUsecase != null)
             saveOfflineSearchUsecase.cancel();
+        if (saveDownloadListUsecase != null)
+            saveDownloadListUsecase.cancel();
     }
 }

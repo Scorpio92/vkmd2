@@ -2,37 +2,28 @@ package ru.scorpio92.vkmd2.domain.usecase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import io.reactivex.Observable;
 import ru.scorpio92.vkmd2.data.entity.OfflineSearchItem;
 import ru.scorpio92.vkmd2.data.repository.db.base.AppDatabase;
-import ru.scorpio92.vkmd2.domain.threading.ThreadExecutor;
-import ru.scorpio92.vkmd2.domain.threading.base.IExecutor;
-import ru.scorpio92.vkmd2.domain.usecase.base.AbstractUsecase;
-import ru.scorpio92.vkmd2.domain.usecase.base.IUsecaseBaseCallback;
+import ru.scorpio92.vkmd2.domain.usecase.base.RxAbstractUsecase;
 
 
 /**
  * Сохранение результатов офлайн поиска
  */
-public class SaveOfflineSearchUsecase extends AbstractUsecase {
+public class SaveOfflineSearchUsecase extends RxAbstractUsecase {
 
     private List<String> trackIdList;
-    private UsecaseCallback callback;
 
-    public SaveOfflineSearchUsecase(List<String> trackIdList, UsecaseCallback callback) {
+    public SaveOfflineSearchUsecase(List<String> trackIdList) {
         this.trackIdList = trackIdList;
-        this.callback = callback;
-    }
-
-
-    @Override
-    protected IExecutor provideExecutor() {
-        return ThreadExecutor.getInstance(true);
     }
 
     @Override
-    public void run() {
-        try {
+    protected Observable provideObservable() {
+        return Observable.fromCallable((Callable<Object>) () -> {
             List<OfflineSearchItem> offlineSearchItems = new ArrayList<>();
             int idx = 1;
             for (String trackId : trackIdList) {
@@ -43,24 +34,8 @@ public class SaveOfflineSearchUsecase extends AbstractUsecase {
             AppDatabase.getInstance().offlineSearchDAO().deleteAll();
             AppDatabase.getInstance().offlineSearchDAO().saveTrackIdList(offlineSearchItems);
 
-            runOnUI(() -> {
-                if (callback != null)
-                    callback.onComplete();
-            });
-        } catch (Exception e) {
-            runOnUI(() -> {
-                if (callback != null)
-                    callback.onError(e);
-            });
-        }
-    }
+            return Observable.empty();
 
-    @Override
-    protected void onInterrupt() {
-        callback = null;
-    }
-
-    public interface UsecaseCallback extends IUsecaseBaseCallback {
-        void onComplete();
+        }).subscribeOn(provideSubscribeScheduler());
     }
 }

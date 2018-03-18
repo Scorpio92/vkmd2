@@ -6,6 +6,8 @@ import ru.scorpio92.vkmd2.data.entity.Track;
 import ru.scorpio92.vkmd2.domain.usecase.GetDownloadListUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.RemoveTracksFromDownloadListUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.SaveDownloadListUsecase;
+import ru.scorpio92.vkmd2.domain.usecase.base.CompletableObserver;
+import ru.scorpio92.vkmd2.domain.usecase.base.SingleObserver;
 import ru.scorpio92.vkmd2.presentation.presenter.base.AbstractPresenter;
 import ru.scorpio92.vkmd2.presentation.presenter.base.IDownloadManagerPresenter;
 import ru.scorpio92.vkmd2.presentation.view.activity.base.IDownloadManagerActivity;
@@ -14,60 +16,70 @@ import ru.scorpio92.vkmd2.tools.Logger;
 
 public class DownloadManagerPresenter extends AbstractPresenter<IDownloadManagerActivity> implements IDownloadManagerPresenter {
 
+    private GetDownloadListUsecase getDownloadListUsecase;
+    private RemoveTracksFromDownloadListUsecase removeTracksFromDownloadListUsecase;
+    private SaveDownloadListUsecase saveDownloadListUsecase;
+
     public DownloadManagerPresenter(IDownloadManagerActivity view) {
         super(view);
+        getDownloadListUsecase = new GetDownloadListUsecase();
     }
 
     @Override
     public void getDownloadList() {
         getView().showProgress(true);
 
-        GetDownloadListUsecase getDownloadListUsecase = new GetDownloadListUsecase(new GetDownloadListUsecase.UsecaseCallback() {
+        getDownloadListUsecase.execute(new SingleObserver<List<Track>>() {
             @Override
-            public void onComplete(List<Track> trackList) {
+            public void onNext(List<Track> tracks) {
                 if (checkViewState()) {
                     getView().showProgress(false);
 
-                    if (trackList.isEmpty())
+                    if (tracks.isEmpty())
                         getView().showToast("Нечего качать!");
                     else
-                        getView().renderDownloadList(trackList);
+                        getView().renderDownloadList(tracks);
                 }
             }
 
             @Override
-            public void onError(Exception e) {
+            public void onError(Throwable e) {
                 if (checkViewState()) {
                     getView().showProgress(false);
                 }
-                Logger.error(e);
+                Logger.error((Exception) e);
             }
         });
-        getDownloadListUsecase.execute();
     }
 
     @Override
     public void sendTracksForDownload(List<String> trackIdList) {
 
-        SaveDownloadListUsecase saveDownloadListUsecase = new SaveDownloadListUsecase(trackIdList, new SaveDownloadListUsecase.UsecaseCallback() {
+        saveDownloadListUsecase = new SaveDownloadListUsecase(trackIdList);
+        saveDownloadListUsecase.execute(new CompletableObserver() {
+            @Override
+            public void onError(Throwable e) {
+                Logger.error((Exception) e);
+            }
+
             @Override
             public void onComplete() {
                 if (checkViewState()) {
                     getView().showToast("Выбранные треки помечены к загрузке");
                 }
             }
-
-            @Override
-            public void onError(Exception e) {
-                Logger.error(e);
-            }
         });
-        saveDownloadListUsecase.execute();
     }
 
     @Override
     public void removeTracksFromDownloadList(List<String> trackIdList) {
-        RemoveTracksFromDownloadListUsecase removeTracksFromDownloadListUsecase = new RemoveTracksFromDownloadListUsecase(trackIdList, new RemoveTracksFromDownloadListUsecase.UsecaseCallback() {
+        removeTracksFromDownloadListUsecase = new RemoveTracksFromDownloadListUsecase(trackIdList);
+        removeTracksFromDownloadListUsecase.execute(new CompletableObserver() {
+            @Override
+            public void onError(Throwable e) {
+                Logger.error((Exception) e);
+            }
+
             @Override
             public void onComplete() {
                 if (checkViewState()) {
@@ -75,12 +87,16 @@ public class DownloadManagerPresenter extends AbstractPresenter<IDownloadManager
                     getView().showToast("Выбранные треки успешно удалены из списка загрузок");
                 }
             }
-
-            @Override
-            public void onError(Exception e) {
-                Logger.error(e);
-            }
         });
-        removeTracksFromDownloadListUsecase.execute();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (removeTracksFromDownloadListUsecase != null)
+            removeTracksFromDownloadListUsecase.cancel();
+        if (saveDownloadListUsecase != null)
+            saveDownloadListUsecase.cancel();
+        getDownloadListUsecase.cancel();
     }
 }

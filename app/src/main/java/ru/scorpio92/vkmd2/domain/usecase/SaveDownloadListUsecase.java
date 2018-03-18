@@ -2,40 +2,34 @@ package ru.scorpio92.vkmd2.domain.usecase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import io.reactivex.Observable;
 import ru.scorpio92.vkmd2.data.entity.CachedTrack;
 import ru.scorpio92.vkmd2.data.entity.OnlineTrack;
 import ru.scorpio92.vkmd2.data.entity.Track;
 import ru.scorpio92.vkmd2.data.repository.db.base.AppDatabase;
-import ru.scorpio92.vkmd2.domain.threading.ThreadExecutor;
-import ru.scorpio92.vkmd2.domain.threading.base.IExecutor;
-import ru.scorpio92.vkmd2.domain.usecase.base.AbstractUsecase;
-import ru.scorpio92.vkmd2.domain.usecase.base.IUsecaseBaseCallback;
+import ru.scorpio92.vkmd2.domain.usecase.base.RxAbstractUsecase;
 import ru.scorpio92.vkmd2.tools.VkmdUtils;
 
 
 /**
  * Сохранение треков в специальной таблице для последующего скачивания
  */
-public class SaveDownloadListUsecase extends AbstractUsecase {
+public class SaveDownloadListUsecase extends RxAbstractUsecase {
 
     private List<String> trackIdList;
-    private UsecaseCallback callback;
 
-    public SaveDownloadListUsecase(List<String> trackIdList, UsecaseCallback callback) {
+    public SaveDownloadListUsecase(List<String> trackIdList) {
         this.trackIdList = trackIdList;
-        this.callback = callback;
     }
 
     @Override
-    protected IExecutor provideExecutor() {
-        return ThreadExecutor.getInstance(true);
-    }
-
-    @Override
-    public void run() {
-        try {
+    protected Observable provideObservable() {
+        return Observable.fromCallable((Callable<Object>) () -> {
             List<CachedTrack> downloadFiles = new ArrayList<>();
+
+            //получаем индекс для вставки
             int idx = AppDatabase.getInstance().cacheDAO().getLastRowId() + 1;
 
             //ищем объект для скачивания в нужной таблице
@@ -62,21 +56,8 @@ public class SaveDownloadListUsecase extends AbstractUsecase {
             if (!downloadFiles.isEmpty())
                 AppDatabase.getInstance().cacheDAO().saveDownloadList(downloadFiles);
 
-            runOnUI(() -> callback.onComplete());
-        } catch (Exception e) {
-            runOnUI(() -> {
-                if (callback != null)
-                    callback.onError(e);
-            });
-        }
-    }
+            return Observable.empty();
 
-    @Override
-    protected void onInterrupt() {
-        callback = null;
-    }
-
-    public interface UsecaseCallback extends IUsecaseBaseCallback {
-        void onComplete();
+        }).subscribeOn(provideSubscribeScheduler());
     }
 }
