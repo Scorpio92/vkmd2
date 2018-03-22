@@ -109,7 +109,7 @@ public class TrackProvider implements ITrackProvider {
                     if (randomEnabled) {
                         cachedTrack = AppDatabase.getInstance().cacheDAO().getTrackByTrackId(getRandomTrackId());
                     } else {
-                        AppDatabase.getInstance().cacheDAO().getNext(currentTrack.getId());
+                        cachedTrack = AppDatabase.getInstance().cacheDAO().getNext(currentTrack.getId());
                     }
                     if (cachedTrack != null)
                         track = VkmdUtils.convertCachedTrackToBase(cachedTrack);

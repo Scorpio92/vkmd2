@@ -87,7 +87,7 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
 
     private String provider = TrackProvider.PROVIDER.ACCOUNT_TABLE.name();
 
-    private boolean offlineMode;
+    private boolean offlineMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -540,11 +540,10 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
 
                     AppCompatCheckBox checkBox = item.getActionView().findViewById(R.id.checkbox);
                     checkBox.setOnClickListener(v -> {
-                        offlineMode = checkBox.isChecked();
-                        onOfflineModeCheck();
+                        checkBox.setChecked(offlineMode);
                     });
-                    checkBox.setChecked(!checkBox.isChecked());
-                    offlineMode = checkBox.isChecked();
+                    offlineMode = !offlineMode;
+                    checkBox.setChecked(offlineMode);
                     onOfflineModeCheck();
                     break;
                 case R.id.menu_sync:

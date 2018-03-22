@@ -3,6 +3,6 @@
     android:id="@+id/checkbox"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:clickable="true"
-    android:focusable="true"
+    android:clickable="false"
+    android:focusable="false"
     android:checked="false" />
