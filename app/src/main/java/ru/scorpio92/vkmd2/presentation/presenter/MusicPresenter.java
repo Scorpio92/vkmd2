@@ -10,7 +10,6 @@ import ru.scorpio92.vkmd2.domain.usecase.SaveDownloadListUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.SaveOfflineSearchUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.base.CompletableObserver;
 import ru.scorpio92.vkmd2.domain.usecase.base.ErrorObserver;
-import ru.scorpio92.vkmd2.domain.usecase.base.IAbstractUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.base.SingleObserver;
 import ru.scorpio92.vkmd2.presentation.presenter.base.AbstractPresenter;
 import ru.scorpio92.vkmd2.presentation.presenter.base.IMusicPresenter;
@@ -21,7 +20,7 @@ import ru.scorpio92.vkmd2.tools.Logger;
 
 public class MusicPresenter extends AbstractPresenter<IMusicActivity> implements IMusicPresenter {
 
-    private IAbstractUsecase getOnlineTracksUsecase;
+    private GetOnlineTracksUsecase getOnlineTracksUsecase;
     private GetTrackListFromDBUsecase getTrackListFromDBUsecase;
     private GetSavedTrackListUsecase getSavedTrackListUsecase;
     private SaveOfflineSearchUsecase saveOfflineSearchUsecase;
@@ -95,29 +94,29 @@ public class MusicPresenter extends AbstractPresenter<IMusicActivity> implements
                 cancelUsecases();
                 String uid = LocalStorage.getDataFromFile(getView().getViewContext(), LocalStorage.USER_ID_STORAGE);
                 String cookie = LocalStorage.getDataFromFile(getView().getViewContext(), LocalStorage.COOKIE_STORAGE);
-                getOnlineTracksUsecase = new GetOnlineTracksUsecase(uid, cookie, searchString, new GetOnlineTracksUsecase.UsecaseCallback() {
+                getOnlineTracksUsecase = new GetOnlineTracksUsecase(uid, cookie, searchString);
+                getOnlineTracksUsecase.execute(new SingleObserver<List<Track>>() {
                     @Override
-                    public void onComplete(List<Track> trackList) {
-                        Logger.log("online tracks: " + trackList.size());
+                    protected void onStart() {
+                        getView().showOnlineSearchProgress(true);
+                    }
+
+                    @Override
+                    public void onNext(List<Track> tracks) {
                         if (checkViewState()) {
-                            getView().showTrackList(trackList);
+                            getView().showTrackList(tracks);
                             getView().showOnlineSearchProgress(false);
                         }
                     }
 
                     @Override
-                    public void onError(Exception e) {
-                        Logger.error(e);
+                    public void onError(Throwable e) {
                         if (checkViewState()) {
                             getView().showToast("Что-то пошло не так...");
                             getView().showOnlineSearchProgress(false);
                         }
                     }
                 });
-
-                getView().showOnlineSearchProgress(true);
-
-                getOnlineTracksUsecase.execute();
             } catch (Exception e) {
                 Logger.error(e);
                 getView().showOnlineSearchProgress(false);

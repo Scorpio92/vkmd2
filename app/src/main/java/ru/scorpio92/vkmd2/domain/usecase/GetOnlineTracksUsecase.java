@@ -3,24 +3,20 @@ package ru.scorpio92.vkmd2.domain.usecase;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 import ru.scorpio92.vkmd2.data.entity.CachedTrack;
 import ru.scorpio92.vkmd2.data.entity.OnlineTrack;
 import ru.scorpio92.vkmd2.data.entity.Track;
 import ru.scorpio92.vkmd2.data.repository.db.base.AppDatabase;
-import ru.scorpio92.vkmd2.data.repository.network.GetSearchTrackListRepo;
-import ru.scorpio92.vkmd2.data.repository.network.core.INetworkRepository;
-import ru.scorpio92.vkmd2.data.repository.network.specifications.GetSearchTrackList;
-import ru.scorpio92.vkmd2.domain.threading.ThreadExecutor;
-import ru.scorpio92.vkmd2.domain.threading.base.IExecutor;
-import ru.scorpio92.vkmd2.domain.usecase.base.AbstractUsecase;
-import ru.scorpio92.vkmd2.domain.usecase.base.IUsecaseBaseCallback;
+import ru.scorpio92.vkmd2.data.repository.network.GetAudioRepo;
+import ru.scorpio92.vkmd2.domain.usecase.base.RxAbstractUsecase;
 import ru.scorpio92.vkmd2.tools.VkmdUtils;
 
 
 /**
  * Поиск аудиозаписей онлайн
  */
-public class GetOnlineTracksUsecase extends AbstractUsecase {
+public class GetOnlineTracksUsecase extends RxAbstractUsecase<List<Track>> {
 
     /**
      * id пользователя под которым выполняется поиск
@@ -31,77 +27,33 @@ public class GetOnlineTracksUsecase extends AbstractUsecase {
      * ключевая фраза (поисковый запрос)
      */
     private String searchQuery;
-    private UsecaseCallback callback;
-    private INetworkRepository repo;
 
-    public GetOnlineTracksUsecase(String uid, String cookie, String searchQuery, UsecaseCallback callback) {
+    public GetOnlineTracksUsecase(String uid, String cookie, String searchQuery) {
         this.uid = uid;
         this.cookie = cookie;
         this.searchQuery = searchQuery;
-        this.callback = callback;
     }
 
     @Override
-    protected IExecutor provideExecutor() {
-        return ThreadExecutor.getInstance(false);
-    }
+    protected Observable<List<Track>> provideObservable() {
+        return new GetAudioRepo(cookie).getSearchAudio(uid, searchQuery)
+                .flatMap(onlineTracks -> {
+                    AppDatabase.getInstance().onlineTrackDAO().saveTrackList(onlineTracks);
 
-    @Override
-    public void run() {
-        if (repo != null)
-            repo.cancel();
+                    List<Track> trackList = new ArrayList<>();
 
-        repo = new GetSearchTrackListRepo(uid, new GetSearchTrackListRepo.Callback() {
-            @Override
-            public void onGetTrackList(List<OnlineTrack> onlineTrackList) {
-                if (callback != null) {
-                    try {
-                        AppDatabase.getInstance().onlineTrackDAO().saveTrackList(onlineTrackList);
-
-                        List<Track> trackList = new ArrayList<>();
-
-                        for (OnlineTrack onlineTrack : onlineTrackList) {
-                            CachedTrack cachedTrack = AppDatabase.getInstance().cacheDAO().getTrackByTrackId(onlineTrack.getTrackId());
-                            Track track = VkmdUtils.convertOnlineTrackToBase(onlineTrack);
-                            if (cachedTrack != null) {
-                                track.setSaved(cachedTrack.isSaved());
-                                track.setSavedPath(cachedTrack.getSavedPath());
-                            }
-                            trackList.add(track);
+                    for (OnlineTrack onlineTrack : onlineTracks) {
+                        CachedTrack cachedTrack = AppDatabase.getInstance().cacheDAO().getTrackByTrackId(onlineTrack.getTrackId());
+                        Track track = VkmdUtils.convertOnlineTrackToBase(onlineTrack);
+                        if (cachedTrack != null) {
+                            track.setSaved(cachedTrack.isSaved());
+                            track.setSavedPath(cachedTrack.getSavedPath());
                         }
-
-                        runOnUI(() -> {
-                            if (callback != null)
-                                callback.onComplete(trackList);
-                        });
-                    } catch (Exception e) {
-                        runOnUI(() -> {
-                            if (callback != null)
-                                callback.onError(e);
-                        });
+                        trackList.add(track);
                     }
-                }
-            }
 
-            @Override
-            public void onError(Exception e) {
-                runOnUI(() -> {
-                    if (callback != null)
-                        callback.onError(e);
-                });
-            }
-        });
-        repo.execute(new GetSearchTrackList(cookie, searchQuery));
-    }
-
-    @Override
-    protected void onInterrupt() {
-        callback = null;
-        if (repo != null)
-            repo.cancel();
-    }
-
-    public interface UsecaseCallback extends IUsecaseBaseCallback {
-        void onComplete(List<Track> trackList);
+                    return Observable.just(trackList);
+                })
+                .subscribeOn(provideSubscribeScheduler());
     }
 }

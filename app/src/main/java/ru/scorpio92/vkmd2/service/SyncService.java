@@ -10,8 +10,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.reactivex.observers.DisposableObserver;
 import ru.scorpio92.vkmd2.domain.usecase.GetAccountTracksUsecase;
-import ru.scorpio92.vkmd2.domain.usecase.base.IAbstractUsecase;
 import ru.scorpio92.vkmd2.tools.LocalStorage;
 import ru.scorpio92.vkmd2.tools.Logger;
 
@@ -50,8 +50,7 @@ public class SyncService extends Service {
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private IAbstractUsecase usecase;
-    private GetAccountTracksUsecase.UsecaseCallback usecaseCallback;
+    private GetAccountTracksUsecase usecase;
 
     @Nullable
     @Override
@@ -119,42 +118,42 @@ public class SyncService extends Service {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                usecaseCallback = getUsecaseCallback();
-                usecase = new GetAccountTracksUsecase(cookie, finalCount, usecaseCallback);
-                sendBroadcastToActivity(EVENT.SYNC_START);
-                usecase.execute();
+                usecase = new GetAccountTracksUsecase(cookie, finalCount);
+                usecase.execute(new DisposableObserver<String>() {
+                    @Override
+                    protected void onStart() {
+                        sendBroadcastToActivity(EVENT.SYNC_START);
+                    }
+
+                    @Override
+                    public void onNext(String uid) {
+                        try {
+                            LocalStorage.setDataInFile(SyncService.this, LocalStorage.USER_ID_STORAGE, uid);
+                        } catch (Exception e) {
+                            Logger.error(e);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        sendBroadcastToActivity(EVENT.SYNC_ERROR);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        try {
+                            LocalStorage.setDataInFile(SyncService.this, LocalStorage.SYNC_LAST_TIME_STORAGE, String.valueOf(System.currentTimeMillis()));
+                        } catch (Exception e) {
+                            Logger.error(e);
+                        }
+                        sendBroadcastToActivity(EVENT.SYNC_FINISH);
+                    }
+                });
             }
         }, SYNC_START_DELAY);
 
     }
 
-    private GetAccountTracksUsecase.UsecaseCallback getUsecaseCallback() {
-        return new GetAccountTracksUsecase.UsecaseCallback() {
-            @Override
-            public void onGetUID(String uid) {
-                try {
-                    LocalStorage.setDataInFile(SyncService.this, LocalStorage.USER_ID_STORAGE, uid);
-                } catch (Exception e) {
-                    Logger.error(e);
-                }
-            }
-
-            @Override
-            public void onComplete() {
-                try {
-                    LocalStorage.setDataInFile(SyncService.this, LocalStorage.SYNC_LAST_TIME_STORAGE, String.valueOf(System.currentTimeMillis()));
-                } catch (Exception e) {
-                    Logger.error(e);
-                }
-                sendBroadcastToActivity(EVENT.SYNC_FINISH);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                sendBroadcastToActivity(EVENT.SYNC_ERROR);
-            }
-        };
-    }
 
     private void sendBroadcastToActivity(EVENT event) {
         try {
@@ -176,7 +175,6 @@ public class SyncService extends Service {
 
     private void finish() {
         if (usecase != null) {
-            usecaseCallback = null;
             usecase.cancel();
             usecase = null;
         }

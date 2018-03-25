@@ -7,20 +7,22 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.NotificationCompat;
+import android.util.Pair;
 import android.widget.RemoteViews;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.data.entity.CachedTrack;
 import ru.scorpio92.vkmd2.data.repository.db.base.AppDatabase;
-import ru.scorpio92.vkmd2.data.repository.network.DownloadTrackRepo;
-import ru.scorpio92.vkmd2.data.repository.network.core.INetworkRepository;
-import ru.scorpio92.vkmd2.data.repository.network.specifications.DownloadTrack;
+import ru.scorpio92.vkmd2.data.repository.network.DownloadAudioRepo;
 import ru.scorpio92.vkmd2.presentation.view.activity.DownloadManagerActivity;
 import ru.scorpio92.vkmd2.tools.Logger;
 import ru.scorpio92.vkmd2.tools.VkmdUtils;
@@ -78,9 +80,7 @@ public class DownloadService extends Service {
     private int percentCurrent;
 
     private boolean downloadPause;
-    private boolean stopService;
-
-    private INetworkRepository downloadTrackRepo;
+    private Disposable disposable;
 
     @Nullable
     @Override
@@ -92,7 +92,6 @@ public class DownloadService extends Service {
     public void onCreate() {
         super.onCreate();
         Logger.log(LOG_TAG, "onCreate");
-        stopService = false;
     }
 
     @Override
@@ -120,10 +119,12 @@ public class DownloadService extends Service {
                             checkForNeedDownload();
                         } else {
                             downloadPause = !downloadPause;
-                            if(downloadPause) {
+                            if (downloadPause) {
                                 markFile(CachedTrack.TRACK_NOT_DOWNLOADED);
-                                if (downloadTrackRepo != null)
-                                    downloadTrackRepo.cancel();
+                                if (disposable != null)
+                                    disposable.dispose();
+                            } else {
+                                checkForNeedDownload();
                             }
 
                             sendBroadcastToActivity(downloadPause ? EVENT.DOWNLOAD_INACTIVE : EVENT.DOWNLOAD_ACTIVE);
@@ -161,22 +162,33 @@ public class DownloadService extends Service {
         return file.exists() || file.mkdir();
     }
 
+    //проверяем - качать дальше или закрывать сервис
+    private void onTerminate() {
+        if (checkFileForDownload()) {
+            startDownload();
+        } else {
+            sendBroadcastToActivity(EVENT.GENERAL_DOWNLOAD_COMPLETE);
+            finish();
+        }
+    }
+
     private void startDownload() {
-        new Thread(() -> {
-            try {
-                downloadTrack = AppDatabase.getInstance().cacheDAO().getTrackByTrackId(downloadTrackId);
+        disposable = Observable.fromCallable(() -> {
+            downloadTrack = AppDatabase.getInstance().cacheDAO().getTrackByTrackId(downloadTrackId);
+            Logger.log(LOG_TAG, "start for download downloadTrack: " + downloadTrack.getName());
+            String url = VkmdUtils.decode(downloadTrack.getUrlAudio(), Integer.valueOf(downloadTrack.getUserId()));
+            String savePath = DEFAULT_DOWNLOAD_PATH + "/" + getAudioFileName(downloadTrack);
+            return new Pair<>(url, savePath);
+        }).flatMap(pair -> new DownloadAudioRepo(pair.first, pair.second).downloadTrack())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribeWith(new DisposableObserver<Integer>() {
 
-                Logger.log(LOG_TAG, "start for download downloadTrack: " + downloadTrack.getName());
+                    final long[] lastTime = {System.currentTimeMillis()};
 
-                String urlString = VkmdUtils.decode(downloadTrack.getUrlAudio(), Integer.valueOf(downloadTrack.getUserId()));
-
-                final long[] lastTime = {System.currentTimeMillis()};
-                percentCurrent = 0;
-
-                downloadTrackRepo = new DownloadTrackRepo(new DownloadTrackRepo.Callback() {
                     @Override
-                    public void onProgressUpdate(int progress) {
-                        percentCurrent = progress;
+                    public void onNext(Integer integer) {
+                        percentCurrent = integer;
                         if (System.currentTimeMillis() - lastTime[0] > DOWNLOAD_PROGRESS_UPDATE_INTERVAL) {
                             lastTime[0] = System.currentTimeMillis();
                             sendBroadcastToActivity(EVENT.DOWNLOAD_PROGRESS_UPDATE);
@@ -184,66 +196,21 @@ public class DownloadService extends Service {
                     }
 
                     @Override
-                    public void onComplete(byte[] bytes) {
-                        OutputStream output = null;
-                        try {
-                            String savedPath = DEFAULT_DOWNLOAD_PATH + "/" + getAudioFileName(downloadTrack);
-                            downloadTrack.setSavedPath(savedPath);
-                            output = new FileOutputStream(savedPath);
-                            output.write(bytes);
-                            markFile(CachedTrack.TRACK_DOWNLOADED);
-                            sendBroadcastToActivity(EVENT.TRACK_DOWNLOAD_COMPLETE);
-                        } catch (Exception e) {
-                            Logger.error(e);
-                            sendBroadcastToActivity(EVENT.TRACK_DOWNLOAD_ERROR);
-                            markFile(CachedTrack.TRACK_DOWNLOAD_ERROR);
-                        } finally {
-                            if (output != null) {
-                                try {
-                                    output.flush();
-                                    output.close();
-                                } catch (Exception e) {
-                                    Logger.error(e);
-                                }
-                            }
-                        }
+                    public void onError(Throwable e) {
+                        Logger.error((Exception) e);
+                        sendBroadcastToActivity(EVENT.TRACK_DOWNLOAD_ERROR);
+                        markFile(CachedTrack.TRACK_DOWNLOAD_ERROR);
+                        onTerminate();
                     }
 
                     @Override
-                    public void onError(Exception e) {
-                        Logger.error(e);
-                        sendBroadcastToActivity(EVENT.TRACK_DOWNLOAD_ERROR);
-                        markFile(CachedTrack.TRACK_DOWNLOAD_ERROR);
+                    public void onComplete() {
+                        markFile(CachedTrack.TRACK_DOWNLOADED);
+                        sendBroadcastToActivity(EVENT.TRACK_DOWNLOAD_COMPLETE);
+                        onTerminate();
                     }
                 });
-                downloadTrackRepo.execute(new DownloadTrack(urlString));
 
-                if (stopService)
-                    return;
-
-                while (downloadPause) {
-                    try {
-                        Logger.log(LOG_TAG, "pause");
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                        Logger.error(e);
-                    }
-                }
-
-
-                //проверяем - качать дальше или закрывать сервис
-                if (checkFileForDownload()) {
-                    startDownload();
-                } else {
-                    sendBroadcastToActivity(EVENT.GENERAL_DOWNLOAD_COMPLETE);
-                    finish();
-                }
-            } catch (Exception e) {
-                Logger.error(e);
-                sendBroadcastToActivity(EVENT.TRACK_DOWNLOAD_ERROR);
-                markFile(CachedTrack.TRACK_DOWNLOAD_ERROR);
-            }
-        }).start();
     }
 
     private void markFile(int status) {
@@ -364,10 +331,8 @@ public class DownloadService extends Service {
     }
 
     private void finish() {
-        stopService = true;
-
-        if (downloadTrackRepo != null)
-            downloadTrackRepo.cancel();
+        if (disposable != null)
+            disposable.dispose();
 
         Logger.log(LOG_TAG, "finish");
 

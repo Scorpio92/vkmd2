@@ -5,7 +5,7 @@ import android.os.Environment;
 
 public class Constants {
 
-    private final static String BASE_URL = "https://m.vk.com";
+    public final static String BASE_URL = "https://m.vk.com";
     public final static String LOGIN_URL = BASE_URL + "/login";
     public final static String AUDIO_URL = BASE_URL + "/audio";
 
