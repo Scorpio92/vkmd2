@@ -22,7 +22,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +29,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -161,6 +161,7 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
     public void showTrackList(List<Track> trackList) {
         trackListContainer.setVisibility(View.VISIBLE);
         trackListAdapter.renderTrackList(trackList);
+        trackListView.scheduleLayoutAnimation();
 
         startService(new Intent(MusicActivity.this, AudioService.class)
                 .putExtra(AudioService.SERVICE_ACTION, AudioService.ACTION.GET_INFO.name())
@@ -399,10 +400,8 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         trackListAdapter = new TrackListAdapter(this, new ArrayList<>(), trackListOnItemClickListener);
         trackListView = findViewById(R.id.trackList);
         trackListView.addItemDecoration(new SpacesItemDecoration(0));
-        trackListView.setHasFixedSize(true);
-        trackListView.setNestedScrollingEnabled(false);
         trackListView.setLayoutManager(new LinearLayoutManager(this));
-        trackListView.setItemAnimator(new DefaultItemAnimator());
+        trackListView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation_slide_right));
         trackListView.setAdapter(trackListAdapter);
 
         footer = findViewById(R.id.footer);

@@ -38,11 +38,12 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListViewHolder> 
         this.selectedTracksId = new ArrayList<>();
         this.filterByArtist = true;
         this.filterByTrackName = true;
+        setHasStableIds(true);
     }
 
     @Override
     public TrackListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new TrackListViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.track_list_row, parent, false));
+        return new TrackListViewHolder(LayoutInflater.from(context).inflate(R.layout.track_list_row, parent, false));
     }
 
     @Override
@@ -106,6 +107,11 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListViewHolder> 
     @Override
     public int getItemCount() {
         return trackList.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override

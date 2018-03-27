@@ -8,4 +8,5 @@
     <color name="colorFont">#2B2B2B</color>
     <color name="colorDarkGrey">#c2c2c2</color>
     <color name="colorTransparent">#80aab3f1</color>
+    <color name="ic_launcher_background">#3F51B5</color>
 </resources>
