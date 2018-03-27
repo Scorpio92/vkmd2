@@ -178,6 +178,7 @@ public class DownloadService extends Service {
             Logger.log(LOG_TAG, "start for download downloadTrack: " + downloadTrack.getName());
             String url = VkmdUtils.decode(downloadTrack.getUrlAudio(), Integer.valueOf(downloadTrack.getUserId()));
             String savePath = DEFAULT_DOWNLOAD_PATH + "/" + getAudioFileName(downloadTrack);
+            downloadTrack.setSavedPath(savePath);
             return new Pair<>(url, savePath);
         }).flatMap(pair -> new DownloadAudioRepo(pair.first, pair.second).downloadTrack())
                 .observeOn(AndroidSchedulers.mainThread())
