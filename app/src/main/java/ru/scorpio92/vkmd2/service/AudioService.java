@@ -200,6 +200,7 @@ public class AudioService extends Service implements
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+        mp.setLooping(loopIsEnabled);
         timer.schedule(new TimerTask(), 0, 1000);
         sendBroadcastToActivity(EVENT.START_PLAY);
         sentNotificationInForeground();
