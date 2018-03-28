@@ -105,7 +105,7 @@ public class TrackProvider implements ITrackProvider {
             int currentTrackPosition = currentTrack.getId() + 1;
             switch (provider) {
                 case SAVED_TABLE:
-                    CachedTrack cachedTrack = null;
+                    CachedTrack cachedTrack;
                     if (randomEnabled) {
                         cachedTrack = AppDatabase.getInstance().cacheDAO().getTrackByTrackId(getRandomTrackId());
                     } else {

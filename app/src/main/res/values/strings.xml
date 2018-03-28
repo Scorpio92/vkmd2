@@ -7,7 +7,7 @@
     <string name="sync_text">Введите количество аудиозаписей которые хотите получить</string>
     <string name="sync_progress_text">Пожалуйста, подождите...</string>
 
-    <string name="exit">Выйти</string>
+    <string name="deauthorize">Деавторизоваться</string>
 
     <string name="navigation_drawer_open">Открыто</string>
     <string name="navigation_drawer_close">Закрыто</string>

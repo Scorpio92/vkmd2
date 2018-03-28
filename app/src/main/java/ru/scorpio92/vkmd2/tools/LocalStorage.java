@@ -40,4 +40,8 @@ public class LocalStorage {
         }
         return false;
     }
+
+    public static boolean deleteFile(Context context, String fileName) {
+        return context.deleteFile(fileName);
+    }
 }

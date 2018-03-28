@@ -259,10 +259,8 @@ public class AudioService extends Service implements
                                 preparePlayerForPlay();
                             }
                         } else {
-                            ///mediaPlayer.start();
                             sendBroadcastToActivity(EVENT.ERROR);
                         }
-                        //sentNotificationInForeground();
                     } catch (Exception e) {
                         Logger.error(e);
                         sendBroadcastToActivity(EVENT.ERROR);

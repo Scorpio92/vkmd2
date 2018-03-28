@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -30,6 +31,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
+import android.webkit.CookieManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -576,8 +578,8 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
                 case R.id.menu_faq:
                     startActivity(new Intent(MusicActivity.this, FaqActivity.class));
                     break;
-                case R.id.menu_exit:
-                    showExitDialog();
+                case R.id.menu_deauthorize:
+                    showDeauthorizeDialog();
                     break;
 
             }
@@ -628,9 +630,45 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         }
     }
 
+    private void showDeauthorizeDialog() {
+        AlertDialog.Builder builder = Dialog.getAlertDialogBuilder("Деавторизация", "Файлы cookie будут удалены с устройства и вы будете перенаправлены на экран авторизации.\nВся сохраненная музыка останется на устройстве.\nПродолжить ?", MusicActivity.this);
+        builder.setCancelable(false);
+        builder.setNegativeButton("Нет", (dialog, which) -> dialog.dismiss());
+        builder.setPositiveButton("Да", (dialog, which) -> {
+            CookieManager cookieManager = CookieManager.getInstance();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                cookieManager.removeAllCookies(aBoolean -> {
+                    Logger.log("Cookie removed: " + aBoolean);
+                    onDeauthorize();
+                });
+            } else {
+                cookieManager.removeAllCookie();
+                onDeauthorize();
+            }
+
+
+        });
+        builder.show();
+    }
+
+    private void onDeauthorize() {
+        if(LocalStorage.deleteFile(this, LocalStorage.COOKIE_STORAGE)) {
+            Logger.log("cookie file deleted");
+            startService(new Intent(MusicActivity.this, AudioService.class)
+                    .putExtra(AudioService.SERVICE_ACTION, AudioService.ACTION.STOP.name())
+            );
+            startService(new Intent(MusicActivity.this, SyncService.class)
+                    .putExtra(SyncService.SERVICE_ACTION, SyncService.ACTION.STOP.name())
+            );
+
+            startActivity(new Intent(MusicActivity.this, AuthActivity.class));
+            finish();
+        }
+    }
+
     private void showExitDialog() {
         AlertDialog.Builder builder = Dialog.getAlertDialogBuilder("Внимание", "Закрыть приложение ?", MusicActivity.this);
-        builder.setCancelable(false);
         builder.setNegativeButton("Нет", (dialog, which) -> dialog.dismiss());
         builder.setPositiveButton("Да", (dialog, which) -> {
             startService(new Intent(MusicActivity.this, AudioService.class)
