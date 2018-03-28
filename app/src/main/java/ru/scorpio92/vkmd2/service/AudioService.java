@@ -111,6 +111,7 @@ public class AudioService extends Service implements
     private boolean loopIsEnabled;
     private boolean randomIsEnabled;
     private boolean wasError;
+    private volatile boolean mpPrepared;
 
     private TelephonyManager telephonyManager;
     private PhoneStateListener phoneStateListener;
@@ -204,6 +205,7 @@ public class AudioService extends Service implements
         timer.schedule(new TimerTask(), 0, 1000);
         sendBroadcastToActivity(EVENT.START_PLAY);
         sentNotificationInForeground();
+        mpPrepared = true;
     }
 
     @Override
@@ -309,8 +311,10 @@ public class AudioService extends Service implements
                         mediaPlayer.pause();
                         sendBroadcastToActivity(EVENT.PAUSE);
                     } else {
-                        mediaPlayer.start();
-                        sendBroadcastToActivity(EVENT.START_PLAY);
+                        if(mpPrepared) {
+                            mediaPlayer.start();
+                            sendBroadcastToActivity(EVENT.START_PLAY);
+                        }
                     }
                 }
                 sentNotificationInForeground();
@@ -364,6 +368,9 @@ public class AudioService extends Service implements
         wasError = false;
 
         mediaPlayer.reset();
+
+        mpPrepared = false;
+
         if (currentTrack.isSaved()) {
             if (new File(currentTrack.getSavedPath()).exists())
                 mediaPlayer.setDataSource(currentTrack.getSavedPath());
