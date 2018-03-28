@@ -1,8 +1,11 @@
 package ru.scorpio92.vkmd2.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
@@ -289,6 +292,11 @@ public class DownloadService extends Service {
         }
     }
 
+    private static final String channelId = "vkmd2_download_channel";
+    private static final String channelName = "Channel download VKMD2";
+    private NotificationManager notificationManager;
+    private NotificationChannel mChannel;
+
     private void sentNotificationInForeground() {
         try {
             Intent notificationIntent = new Intent(this, DownloadManagerActivity.class);
@@ -297,7 +305,22 @@ public class DownloadService extends Service {
             PendingIntent pendingIntentStartPause = PendingIntent.getBroadcast(this, 0, new Intent().setAction(NOTIFICATION_ACTION_START_PAUSE), PendingIntent.FLAG_UPDATE_CURRENT);
             PendingIntent pendingIntentStop = PendingIntent.getBroadcast(this, 0, new Intent().setAction(NOTIFICATION_ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT);
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            if (notificationManager == null) {
+                notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            }
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                if (mChannel == null) {
+                    mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+                    mChannel.enableVibration(false);
+                    mChannel.setVibrationPattern(null);
+                    mChannel.enableLights(false);
+                    mChannel.setSound(null, null);
+                    notificationManager.createNotificationChannel(mChannel);
+                }
+            }
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
 
             RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_service_notification);
 
@@ -321,7 +344,10 @@ public class DownloadService extends Service {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 builder.setVisibility(Notification.VISIBILITY_PUBLIC);
             }
-            builder.setPriority(Notification.PRIORITY_MAX);
+            builder.setPriority(Notification.PRIORITY_DEFAULT);
+            builder.setOnlyAlertOnce(true);
+            builder.setSound(null);
+            builder.setVibrate(null);
 
             Notification notification = builder.build();
             startForeground(NOTIFICATION_ID, notification);
