@@ -292,6 +292,7 @@ public class VkmdUtils {
         track.setUrlAudio(cachedTrack.getUrlAudio());
         track.setSaved(cachedTrack.isSaved());
         track.setSavedPath(cachedTrack.getSavedPath());
+        track.setDownloadError(cachedTrack.getStatus() == CachedTrack.TRACK_DOWNLOAD_ERROR);
         return track;
     }
 

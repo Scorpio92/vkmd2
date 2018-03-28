@@ -26,6 +26,7 @@ public class Track extends BaseTrack {
     public Track() {
         this.saved = false;
         this.savedPath = "";
+        this.downloadError = false;
     }
 
 
