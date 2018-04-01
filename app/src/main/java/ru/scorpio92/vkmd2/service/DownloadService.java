@@ -30,12 +30,13 @@ import ru.scorpio92.vkmd2.presentation.view.activity.DownloadManagerActivity;
 import ru.scorpio92.vkmd2.tools.Logger;
 import ru.scorpio92.vkmd2.tools.VkmdUtils;
 
+import static ru.scorpio92.vkmd2.App.APP_DIR;
+import static ru.scorpio92.vkmd2.BuildConfig.MUSIC_FOLDER;
+
 
 public class DownloadService extends Service {
 
     private final String LOG_TAG = this.getClass().getSimpleName();
-    public static final String DEFAULT_DOWNLOAD_FOLDER = "vkmd";
-    public static final String DEFAULT_DOWNLOAD_PATH = System.getenv("EXTERNAL_STORAGE") + "/" + DEFAULT_DOWNLOAD_FOLDER;
     public static final int FILE_NAME_LENGTH_LIMIT = 255 - 7;
     public static final String MP3_EXT = ".mp3";
     private static final int DOWNLOAD_PROGRESS_UPDATE_INTERVAL = 1000; //ms
@@ -161,8 +162,8 @@ public class DownloadService extends Service {
     }
 
     private boolean checkDownloadFolder() {
-        File file = new File(DEFAULT_DOWNLOAD_PATH);
-        return file.exists() || file.mkdir();
+        File file = new File(APP_DIR + "/" + MUSIC_FOLDER);
+        return file.exists() || file.mkdirs();
     }
 
     //проверяем - качать дальше или закрывать сервис
@@ -180,7 +181,7 @@ public class DownloadService extends Service {
             downloadTrack = AppDatabase.getInstance().cacheDAO().getTrackByTrackId(downloadTrackId);
             Logger.log(LOG_TAG, "start for download downloadTrack: " + downloadTrack.getName());
             String url = VkmdUtils.decode(downloadTrack.getUrlAudio(), Integer.valueOf(downloadTrack.getUserId()));
-            String savePath = DEFAULT_DOWNLOAD_PATH + "/" + getAudioFileName(downloadTrack);
+            String savePath = APP_DIR + "/" + MUSIC_FOLDER + "/" + getAudioFileName(downloadTrack);
             downloadTrack.setSavedPath(savePath);
             return new Pair<>(url, savePath);
         }).flatMap(pair -> new DownloadAudioRepo(pair.first, pair.second).downloadTrack())

@@ -7,8 +7,9 @@ import android.webkit.WebViewClient;
 
 import ru.scorpio92.vkmd2.tools.Logger;
 
-import static ru.scorpio92.vkmd2.Constants.AUDIO_URL;
-import static ru.scorpio92.vkmd2.Constants.LOGIN_URL;
+import static ru.scorpio92.vkmd2.BuildConfig.AUDIO_URL;
+import static ru.scorpio92.vkmd2.BuildConfig.LOGIN_URL;
+
 
 public class CustomWebViewClient extends WebViewClient {
 

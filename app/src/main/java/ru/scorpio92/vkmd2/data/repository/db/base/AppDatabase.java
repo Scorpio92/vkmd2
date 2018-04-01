@@ -16,8 +16,9 @@ import ru.scorpio92.vkmd2.data.repository.db.dao.OfflineSearchDAO;
 import ru.scorpio92.vkmd2.data.repository.db.dao.OnlineTrackDAO;
 import ru.scorpio92.vkmd2.data.repository.db.dao.TrackDAO;
 
-import static ru.scorpio92.vkmd2.Constants.DB_NAME;
-import static ru.scorpio92.vkmd2.Constants.DB_PATH;
+import static ru.scorpio92.vkmd2.App.APP_DIR;
+import static ru.scorpio92.vkmd2.BuildConfig.DB_FOLDER;
+import static ru.scorpio92.vkmd2.BuildConfig.DB_NAME;
 
 
 @Database(entities = {Track.class, CachedTrack.class, OnlineTrack.class, OfflineSearchItem.class}, version = 1)
@@ -26,17 +27,17 @@ public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
 
     public static void initDB(Context context) {
-        File dbDir = new File(DB_PATH);
-        if(!dbDir.exists())
+        File dbDir = new File(APP_DIR + "/" + DB_FOLDER);
+        if (!dbDir.exists())
             dbDir.mkdirs();
 
         if (instance == null) {
-            instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DB_PATH + "/" + DB_NAME).allowMainThreadQueries().build();
+            instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, APP_DIR + "/" + DB_FOLDER + "/" + DB_NAME).allowMainThreadQueries().build();
         }
     }
 
     public static void closeDB() {
-        if(instance != null) {
+        if (instance != null) {
             instance.close();
             instance = null;
         }

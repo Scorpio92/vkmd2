@@ -18,7 +18,7 @@ import ru.scorpio92.vkmd2.presentation.view.activity.base.ISyncActivity;
 import ru.scorpio92.vkmd2.tools.LocalStorage;
 import ru.scorpio92.vkmd2.tools.Logger;
 
-import static ru.scorpio92.vkmd2.Constants.GET_AUDIO_OFFSET;
+import static ru.scorpio92.vkmd2.BuildConfig.GET_AUDIO_OFFSET;
 
 
 public class SyncActivity extends AbstractActivity<ISyncPresenter> implements ISyncActivity {

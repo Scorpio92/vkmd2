@@ -10,7 +10,7 @@ import ru.scorpio92.vkmd2.data.repository.network.GetAudioRepo;
 import ru.scorpio92.vkmd2.domain.usecase.base.RxAbstractUsecase;
 import ru.scorpio92.vkmd2.tools.Logger;
 
-import static ru.scorpio92.vkmd2.Constants.GET_AUDIO_OFFSET;
+import static ru.scorpio92.vkmd2.BuildConfig.GET_AUDIO_OFFSET;
 
 
 /**

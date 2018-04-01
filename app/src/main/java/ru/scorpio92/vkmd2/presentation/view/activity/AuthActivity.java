@@ -22,7 +22,7 @@ import ru.scorpio92.vkmd2.presentation.view.webview.CustomWebView;
 import ru.scorpio92.vkmd2.presentation.view.webview.CustomWebViewClient;
 import ru.scorpio92.vkmd2.tools.LocalStorage;
 
-import static ru.scorpio92.vkmd2.Constants.AUDIO_URL;
+import static ru.scorpio92.vkmd2.BuildConfig.AUDIO_URL;
 
 
 public class AuthActivity extends AbstractActivity implements IAuthActivity {

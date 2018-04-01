@@ -8,14 +8,31 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+
+        buildConfigField "String", "AUTHOR_URL", '"http://scorpio92.ru/about"'
+
+        buildConfigField "String", "BASE_URL", '"https://m.vk.com"'
+        buildConfigField "String", "LOGIN_URL", '"https://m.vk.com/login"'
+        buildConfigField "String", "AUDIO_URL", '"https://m.vk.com/audio"'
+
+        buildConfigField "int", "GET_AUDIO_OFFSET", '200'
+
+        buildConfigField "String", "APP_FOLDER", '"VKMD"'
+        buildConfigField "String", "MUSIC_FOLDER", '"music"'
+        buildConfigField "String", "DB_FOLDER", '"database"'
+        buildConfigField "String", "DB_NAME", '"vkmd.db"'
+
     }
     buildTypes {
         debug {
+            applicationIdSuffix '.debug'
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
-            minifyEnabled true
+            debuggable false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

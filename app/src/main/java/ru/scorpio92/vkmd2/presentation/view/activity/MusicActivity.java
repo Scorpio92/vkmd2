@@ -62,7 +62,8 @@ import ru.scorpio92.vkmd2.tools.Dialog;
 import ru.scorpio92.vkmd2.tools.LocalStorage;
 import ru.scorpio92.vkmd2.tools.Logger;
 
-import static ru.scorpio92.vkmd2.Constants.AUTHOR_URL;
+import static ru.scorpio92.vkmd2.BuildConfig.AUTHOR_URL;
+
 
 public class MusicActivity extends AbstractActivity<IMusicPresenter> implements IMusicActivity {
 
