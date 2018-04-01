@@ -215,7 +215,6 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         pauseBtn.setVisibility(View.GONE);
         playBtn.setVisibility(View.GONE);
         prepareProgress.setVisibility(show ? View.VISIBLE : View.GONE);
-        //pickerProgress.setVisibility(show ? View.VISIBLE : View.GONE);
         if (show) {
             pickerProgress.setVisibility(View.VISIBLE);
         } else {
@@ -239,7 +238,7 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
 
     @Override
     public void showPrepareForDownload() {
-        showToast("Загрузка скоро начнётся...");
+        showToast(getString(R.string.download_started_soon));
     }
 
     @Override
@@ -270,7 +269,7 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         additionalSearchPanel = findViewById(R.id.search_additional_panel);
         onlineSearch = findViewById(R.id.onlineSearch);
         searchView = findViewById(R.id.search);
-        searchView.setQueryHint("Поиск по аудиозаписям...");
+        searchView.setQueryHint(getString(R.string.audio_search));
         searchView.setIconifiedByDefault(true);
         searchView.onActionViewExpanded();
         searchView.clearFocus();
@@ -315,34 +314,15 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
             onlineSearch.requestLayout();
             additionalSearchPanel.setVisibility(View.GONE);
             hideKeyboard();
-
-            /*if (onlineSearch.isChecked()) {
-                getPresenter().getTrackList();
-            } else {
-                trackListAdapter.resetFilter();
-            }*/
             if (offlineMode)
                 getPresenter().getSavedTrackList();
             else
                 getPresenter().getTrackList();
         });
 
-        /*AppCompatCheckBox filterByArtist = findViewById(R.id.filterByArtist);
-        AppCompatCheckBox filterByTrackName = findViewById(R.id.filterByTrackName);
-        filterByArtist.setOnClickListener(v -> {
-            trackListAdapter.setFilterByArtist(filterByArtist.isChecked());
-            trackListAdapter.filter(searchView.getQuery());
-        });
-        filterByTrackName.setOnClickListener(v -> {
-            trackListAdapter.setFilterByTrackName(filterByTrackName.isChecked());
-            trackListAdapter.filter(searchView.getQuery());
-        });*/
         onlineSearch.setOnClickListener(v -> {
             provider = onlineSearch.isChecked() ? TrackProvider.PROVIDER.ONLINE_SEARCH_TABLE.name() : TrackProvider.PROVIDER.OFFLINE_SEARCH_TABLE.name();
             trackListAdapter.setOnlineSearch(onlineSearch.isChecked());
-            /*if (!onlineSearch.isChecked()) {
-                getPresenter().getTrackList();
-            }*/
             if (onlineSearch.isChecked()) {
                 getPresenter().getOnlineTracks(searchView.getQuery());
             } else {
@@ -357,13 +337,13 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         unselectAll = findViewById(R.id.unselectAll);
         selectAll.setOnClickListener(v -> {
             if (trackListAdapter.getItemCount() == 0) {
-                showToast("А выбирать то нечего!");
+                showToast(getString(R.string.error_nothing_select));
             } else {
                 selectAll.setVisibility(View.GONE);
                 unselectAll.setVisibility(View.VISIBLE);
                 trackListAdapter.selectAll();
                 selectedDesc.setVisibility(View.VISIBLE);
-                selectedDesc.setText(String.format("Выбрано: %d", trackListAdapter.getSelectedTracks().size()));
+                selectedDesc.setText(String.format(getString(R.string.selected) + "%d", trackListAdapter.getSelectedTracks().size()));
                 download.setVisibility(View.VISIBLE);
             }
         });
@@ -374,18 +354,18 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         download = findViewById(R.id.download);
         download.setOnClickListener(v -> {
             if (trackListAdapter.checkSelectedTracksIsEmpty()) {
-                showToast("А качать то нечего!");
+                showToast(getString(R.string.error_nothing_download));
                 hideAdditionalButtonsInToolbar();
                 trackListAdapter.uncheckAll();
             } else {
-                AlertDialog.Builder builder = Dialog.getAlertDialogBuilder("Внимание", "Вы действительно хотите всё это скачать? Оно Вам надо?", MusicActivity.this);
+                AlertDialog.Builder builder = Dialog.getAlertDialogBuilder(getString(R.string.dialog_title), getString(R.string.dialog_download), MusicActivity.this);
                 builder.setCancelable(false);
-                builder.setNegativeButton("Нет", (dialog, which) -> {
+                builder.setNegativeButton(getString(R.string.dialog_no), (dialog, which) -> {
                     hideAdditionalButtonsInToolbar();
                     trackListAdapter.uncheckAll();
                     dialog.dismiss();
                 });
-                builder.setPositiveButton("Да!", (dialog, which) -> {
+                builder.setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> {
                     getPresenter().sendTracksForDownload(trackListAdapter.getSelectedTracks());
                     hideAdditionalButtonsInToolbar();
                     trackListAdapter.uncheckAll();
@@ -549,10 +529,10 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
                     onOfflineModeCheck();
                     break;
                 case R.id.menu_sync:
-                    AlertDialog.Builder builder = Dialog.getAlertDialogBuilder("Внимание", "Синхронизировать локальную библиотеку аудио с акаунтом ВК ?", MusicActivity.this);
+                    AlertDialog.Builder builder = Dialog.getAlertDialogBuilder(getString(R.string.dialog_title), getString(R.string.dialog_sync), MusicActivity.this);
                     builder.setCancelable(false);
-                    builder.setNegativeButton("Нет", (dialog, which) -> dialog.dismiss());
-                    builder.setPositiveButton("Да", (dialog, which) -> {
+                    builder.setNegativeButton(getString(R.string.dialog_no), (dialog, which) -> dialog.dismiss());
+                    builder.setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> {
                         startActivity(new Intent(MusicActivity.this, AuthActivity.class).putExtra(AuthActivity.FORCE_SYNC_KEY, true));
                         finish();
                     });
@@ -565,10 +545,8 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
                     startActivity(new Intent(MusicActivity.this, SettingsActivity.class));
                     break;
                 case R.id.menu_about:
-                    AlertDialog.Builder builderID = Dialog.getAlertDialogBuilder("О программе", "Данное приложение для прослушивания и скачивания музыки с ресурса VK.com создано на добровольных началах для простого рабочего класса на зло жлобистой буржуйской компании Mail.Ru Group.\nИспользование приложения в коммерческих целях запрещено.\nПо вопросам и предложениям обращаться по контактам указанным на сайте автора.\nПриятного пользования!", MusicActivity.this);
-                    builderID.setCancelable(false);
-                    builderID.setNegativeButton("ОК", (dialog, which) -> dialog.dismiss());
-                    builderID.setPositiveButton("Об авторе", (dialog, which) -> {
+                    AlertDialog.Builder builderID = Dialog.getAlertDialogBuilder(getString(R.string.about), getString(R.string.dialog_about), MusicActivity.this);
+                    builderID.setPositiveButton(getString(R.string.dialog_about_author), (dialog, which) -> {
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(AUTHOR_URL));
                         startActivity(i);
@@ -614,8 +592,8 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
     private void checkFirstRun() {
         try {
             if (!LocalStorage.fileExist(this, LocalStorage.IS_NOT_FIRST_RUN)) {
-                Dialog.getAlertDialogBuilder("Добро пожаловать!", "Это первый запуск приложения и вы получили свои первые 200 аудиозаписей!\nЧтобы получить больше, выполните ручную синхронизацию (Меню -> Синхронизация) с укзанием примерного кол-ва аудиозаписей на вашей странице.", this)
-                        .setPositiveButton("OK", (dialog, which) -> {
+                Dialog.getAlertDialogBuilder(getString(R.string.dialog_intro_title), getString(R.string.dialog_intro), this)
+                        .setPositiveButton(getString(R.string.dialog_ok), (dialog, which) -> {
                             try {
                                 LocalStorage.setDataInFile(MusicActivity.this, LocalStorage.IS_NOT_FIRST_RUN, "");
                                 dialog.dismiss();
@@ -632,10 +610,10 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
     }
 
     private void showDeauthorizeDialog() {
-        AlertDialog.Builder builder = Dialog.getAlertDialogBuilder("Деавторизация", "Файлы cookie будут удалены с устройства и вы будете перенаправлены на экран авторизации.\nВся сохраненная музыка останется на устройстве.\nПродолжить ?", MusicActivity.this);
+        AlertDialog.Builder builder = Dialog.getAlertDialogBuilder(getString(R.string.dialog_deauthorize_title), getString(R.string.dialog_deauthorize), MusicActivity.this);
         builder.setCancelable(false);
-        builder.setNegativeButton("Нет", (dialog, which) -> dialog.dismiss());
-        builder.setPositiveButton("Да", (dialog, which) -> {
+        builder.setNegativeButton(getString(R.string.dialog_no), (dialog, which) -> dialog.dismiss());
+        builder.setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> {
             CookieManager cookieManager = CookieManager.getInstance();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -654,7 +632,7 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
     }
 
     private void onDeauthorize() {
-        if(LocalStorage.deleteFile(this, LocalStorage.COOKIE_STORAGE)) {
+        if (LocalStorage.deleteFile(this, LocalStorage.COOKIE_STORAGE)) {
             Logger.log("cookie file deleted");
             startService(new Intent(MusicActivity.this, AudioService.class)
                     .putExtra(AudioService.SERVICE_ACTION, AudioService.ACTION.STOP.name())
@@ -669,9 +647,9 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
     }
 
     private void showExitDialog() {
-        AlertDialog.Builder builder = Dialog.getAlertDialogBuilder("Внимание", "Закрыть приложение ?", MusicActivity.this);
-        builder.setNegativeButton("Нет", (dialog, which) -> dialog.dismiss());
-        builder.setPositiveButton("Да", (dialog, which) -> {
+        AlertDialog.Builder builder = Dialog.getAlertDialogBuilder(getString(R.string.dialog_title), getString(R.string.dialog_exit), MusicActivity.this);
+        builder.setNegativeButton(getString(R.string.dialog_no), (dialog, which) -> dialog.dismiss());
+        builder.setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> {
             startService(new Intent(MusicActivity.this, AudioService.class)
                     .putExtra(AudioService.SERVICE_ACTION, AudioService.ACTION.STOP.name())
             );
@@ -701,7 +679,7 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
                 selectAll.setVisibility(View.GONE);
                 unselectAll.setVisibility(View.VISIBLE);
                 selectedDesc.setVisibility(View.VISIBLE);
-                selectedDesc.setText(String.format("Выбрано: %d", trackListAdapter.getSelectedTracks().size()));
+                selectedDesc.setText(String.format(getString(R.string.selected) + "%d", trackListAdapter.getSelectedTracks().size()));
                 download.setVisibility(View.VISIBLE);
             } else {
                 hideAdditionalButtonsInToolbar();
@@ -738,22 +716,21 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
                                 showPlayButton();
                             }
                             trackListAdapter.showCurrentTrackIsPlayed(bundle.getString(AudioService.AUDIO_TRACK_ID_PARAM));
-                            //trackListView.smoothScrollToPosition(bundle.getInt(AudioService.AUDIO_TRACK_POSITION_PARAM) - 1);
                             break;
                         case LOOP_ENABLED:
-                            showToast("Повтор композиции включен");
+                            showToast(getString(R.string.player_loop_enabled));
                             loopBtn.setColorFilter(getResources().getColor(R.color.colorPrimaryDark));
                             break;
                         case LOOP_DISABLED:
-                            showToast("Повтор композиции выключен");
+                            showToast(getString(R.string.player_loop_disabled));
                             loopBtn.setColorFilter(getResources().getColor(android.R.color.black));
                             break;
                         case RANDOM_ENABLED:
-                            showToast("Режим случайного воспроизведения включен");
+                            showToast(getString(R.string.player_random_enabled));
                             randomBtn.setColorFilter(getResources().getColor(R.color.colorPrimaryDark));
                             break;
                         case RANDOM_DISABLED:
-                            showToast("Режим случайного воспроизведения выключен");
+                            showToast(getString(R.string.player_random_disabled));
                             randomBtn.setColorFilter(getResources().getColor(android.R.color.black));
                             break;
                         case PREPARE_FOR_PLAY:
@@ -765,7 +742,6 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
                                     bundle.getString(AudioService.AUDIO_TRACK_IMAGE_URL_PARAM)
                             );
                             trackListAdapter.showCurrentTrackIsPlayed(bundle.getString(AudioService.AUDIO_TRACK_ID_PARAM));
-                            //trackListView.smoothScrollToPosition(bundle.getInt(AudioService.AUDIO_TRACK_POSITION_PARAM) - 1);
                             break;
                         case START_PLAY:
                             showPrepareForPlay(false);
@@ -786,7 +762,7 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
                         case ERROR:
                             showPrepareForPlay(false);
                             showPlayButton();
-                            showToast("Произошла ошибка при воспроизведении");
+                            showToast(getString(R.string.error_playing));
                     }
                 }
             }
@@ -819,19 +795,18 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
                 if (eventStr != null) {
                     switch (Enum.valueOf(SyncService.EVENT.class, eventStr)) {
                         case SYNC_START:
-                            showToast("Синхронизация аудио запущена");
+                            showToast(getString(R.string.sync_started));
                             break;
                         case SYNC_FINISH:
-                            showToast("Синхронизация аудио закончена");
+                            showToast(getString(R.string.sync_completed));
                             getPresenter().getTrackList();
                             break;
                         case SYNC_WAS_COMPLETED:
-                            //showToast("Синхронизация аудио была выполнена ранее");
                             getPresenter().getTrackList();
                             checkFirstRun();
                             break;
                         case SYNC_ERROR:
-                            showToast("Ошибка синхронизации аудио");
+                            showToast(getString(R.string.error_sync));
                             break;
                     }
                 }

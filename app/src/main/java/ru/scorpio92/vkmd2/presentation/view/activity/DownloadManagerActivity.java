@@ -117,7 +117,7 @@ public class DownloadManagerActivity extends AbstractActivity<IDownloadManagerPr
         selectAll = findViewById(R.id.selectAll);
         selectAll.setOnClickListener(v -> {
             if(downloadListAdapter.getItemCount() == 0) {
-                showToast("А выбрать то нечего!");
+                showToast(getString(R.string.error_nothing_select));
             } else {
                 downloadListAdapter.selectAll();
                 showHideAdditionalButtonsInToolbar(true);
@@ -169,7 +169,7 @@ public class DownloadManagerActivity extends AbstractActivity<IDownloadManagerPr
             selectAll.setVisibility(View.GONE);
             unselectAll.setVisibility(View.VISIBLE);
             selectedDesc.setVisibility(View.VISIBLE);
-            selectedDesc.setText(String.format("Выбрано: %d", downloadListAdapter.getSelectedTracks().size()));
+            selectedDesc.setText(String.format(getString(R.string.selected) + "%d", downloadListAdapter.getSelectedTracks().size()));
             retry.setVisibility(View.VISIBLE);
             removeDownloads.setVisibility(View.VISIBLE);
         } else {
@@ -201,11 +201,11 @@ public class DownloadManagerActivity extends AbstractActivity<IDownloadManagerPr
                 if (eventStr != null) {
                     switch (Enum.valueOf(DownloadService.EVENT.class, eventStr)) {
                         case GENERAL_START_DOWNLOAD:
-                            showToast("Загрузка началась...");
+                            showToast(getString(R.string.download_started));
                             showStartPauseButtons(false);
                             break;
                         case GENERAL_DOWNLOAD_COMPLETE:
-                            showToast("Загрузка закончилась");
+                            showToast(getString(R.string.download_completed));
                             showStartPauseButtons(true);
                             break;
                         case DOWNLOAD_PROGRESS_UPDATE:
@@ -220,11 +220,11 @@ public class DownloadManagerActivity extends AbstractActivity<IDownloadManagerPr
                             break;
                         case GENERAL_DOWNLOAD_ERROR:
                             showStartPauseButtons(true);
-                            showToast("Возник косячок при загрузке:(");
+                            showToast(getString(R.string.error_download));
                             break;
                         case NOTHING_DOWNLOAD:
                             showStartPauseButtons(true);
-                            showToast("А качать-то нечего!");
+                            showToast(getString(R.string.error_nothing_download));
                             break;
                         case DOWNLOAD_ACTIVE:
                             showStartPauseButtons(false);

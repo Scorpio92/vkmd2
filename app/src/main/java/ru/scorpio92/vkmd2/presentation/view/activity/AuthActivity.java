@@ -20,7 +20,9 @@ import ru.scorpio92.vkmd2.presentation.view.activity.base.AbstractActivity;
 import ru.scorpio92.vkmd2.presentation.view.activity.base.IAuthActivity;
 import ru.scorpio92.vkmd2.presentation.view.webview.CustomWebView;
 import ru.scorpio92.vkmd2.presentation.view.webview.CustomWebViewClient;
+import ru.scorpio92.vkmd2.tools.Dialog;
 import ru.scorpio92.vkmd2.tools.LocalStorage;
+import ru.scorpio92.vkmd2.tools.Logger;
 
 import static ru.scorpio92.vkmd2.BuildConfig.AUDIO_URL;
 
@@ -88,6 +90,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
         @Override
         public void onAuthPageLoaded() {
             showWebView();
+            showDialog();
         }
 
         @Override
@@ -146,7 +149,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
                         ((App) getApplication()).init();
                         initUI();
                     } else {
-                        showToast("Для работы приложению необходимо предоставить нужные разрешения");
+                        showToast(getString(R.string.need_permissions));
                         finish();
                     }
                 });
@@ -160,5 +163,25 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
         boolean activeMode = PreferenceManager.getDefaultSharedPreferences(AuthActivity.this).getBoolean(SettingsActivity.ACTIVE_KEY, false);
 
         return forceSync || activeMode;
+    }
+
+    private void showDialog() {
+        if(!LocalStorage.fileExist(this, LocalStorage.LOGIN_DIALOG_FLAG)) {
+            Dialog.getAlertDialogBuilder(getString(R.string.dialog_login_title), getString(R.string.dialog_login), this)
+                    .setPositiveButton(getString(R.string.dialog_continue), (dialog, which) -> {
+                        try {
+                            LocalStorage.setDataInFile(AuthActivity.this, LocalStorage.LOGIN_DIALOG_FLAG, "");
+                            dialog.dismiss();
+                        } catch (Exception e) {
+                            Logger.error(e);
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.dialog_close), (dialogInterface, i) -> {
+                        App.finish();
+                        finish();
+                    })
+                    .setCancelable(false)
+                    .show();
+        }
     }
 }
