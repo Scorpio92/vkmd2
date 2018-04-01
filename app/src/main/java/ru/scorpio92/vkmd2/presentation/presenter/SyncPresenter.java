@@ -1,5 +1,10 @@
 package ru.scorpio92.vkmd2.presentation.presenter;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import io.reactivex.observers.DisposableObserver;
 import ru.scorpio92.vkmd2.domain.usecase.GetAccountTracksUsecase;
 import ru.scorpio92.vkmd2.presentation.presenter.base.AbstractPresenter;
@@ -51,10 +56,37 @@ public class SyncPresenter extends AbstractPresenter<ISyncActivity> implements I
                 }
 
                 if (checkViewState()) {
-                    getView().showMusicActivity();
+                    sendInfoToFirestore();
                 }
             }
         });
+    }
+
+    private void sendInfoToFirestore() {
+        try {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            Map<String, Object> user = new HashMap<>();
+            user.put("uid", LocalStorage.getDataFromFile(getView().getViewContext(), LocalStorage.USER_ID_STORAGE));
+            user.put("fcm_token", LocalStorage.getDataFromFile(getView().getViewContext(), LocalStorage.FCM_TOKEN));
+            user.put("timestamp", String.valueOf(System.currentTimeMillis()));
+
+            db.collection("users")
+                    .add(user)
+                    .addOnSuccessListener(documentReference -> {
+                        Logger.log("DocumentSnapshot added with ID: " + documentReference.getId());
+                        if (getView().getViewContext() != null)
+                            LocalStorage.deleteFile(getView().getViewContext(), LocalStorage.FCM_TOKEN);
+                        getView().showMusicActivity();
+                    })
+                    .addOnFailureListener(e -> {
+                        Logger.error(e);
+                        getView().showMusicActivity();
+                    });
+        } catch (Exception e) {
+            Logger.error(e);
+            if(checkViewState())
+                getView().showMusicActivity();
+        }
     }
 
     @Override

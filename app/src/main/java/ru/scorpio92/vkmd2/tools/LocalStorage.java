@@ -14,6 +14,7 @@ public class LocalStorage {
     public final static String IS_NOT_FIRST_RUN = ".first_run";
     public final static String USER_ID_STORAGE = ".uid";
     public final static String LOGIN_DIALOG_FLAG = ".ldf";
+    public final static String FCM_TOKEN = ".fcm_token";
 
     public static void setDataInFile(Context context, String fileName, String data) throws Exception {
         FileOutputStream outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
