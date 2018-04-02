@@ -9,32 +9,33 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:scaleX="0.6"
-        android:scaleY="0.6"
-        android:src="@mipmap/ic_file_download_black_24dp" />
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:src="@mipmap/ic_launcher" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="4"
+        android:layout_weight="3"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:padding="@dimen/dp_12">
+        android:paddingTop="@dimen/dp_4">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
-            android:paddingBottom="@dimen/dp_2">
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/dp_6"
+            android:paddingRight="@dimen/dp_6">
 
             <TextView
                 style="@style/TextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:fontFamily="sans-serif-light"
-                android:paddingRight="@dimen/dp_6"
-                android:text="Загружается:" />
+                android:fontFamily="sans-serif-condensed"
+                android:text="Загружается:"
+                android:textColor="@color/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/trackName"
@@ -45,7 +46,8 @@
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-medium"
                 android:maxLines="1"
-                android:text="Track name" />
+                android:text="Track name"
+                android:textColor="@color/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/downloadProgress"
@@ -53,18 +55,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fontFamily="sans-serif-medium"
-                android:text="100%" />
+                android:text="100%"
+                android:textColor="@color/colorPrimaryDark" />
 
         </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_1"
-            android:background="@color/colorDarkGrey" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_6"
             android:orientation="horizontal">
 
             <ImageButton
