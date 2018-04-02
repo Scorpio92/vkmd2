@@ -41,10 +41,11 @@
     <style name="FaqTextQuestion" parent="FaqText">
         <item name="android:drawablePadding">@dimen/dp_6</item>
         <item name="android:drawableLeft">@mipmap/ic_help_black_24dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="FaqTextAnswer" parent="FaqText">
-        <item name="android:textColor">@color/colorDarkGrey</item>
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
     <style name="ButtonStyle" parent="Base.Widget.AppCompat.Button">

@@ -27,6 +27,8 @@ public class FaqListAdapter extends RecyclerView.Adapter<FaqViewHolder> {
 
         animationFadeIn = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
         animationFadeOut = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
+
+        setHasStableIds(true);
     }
 
     @Override
@@ -46,6 +48,11 @@ public class FaqListAdapter extends RecyclerView.Adapter<FaqViewHolder> {
     @Override
     public int getItemCount() {
         return faqItems.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     private void hideShow(View view) {
