@@ -309,7 +309,7 @@ public class AudioService extends Service implements
                         mediaPlayer.pause();
                         sendBroadcastToActivity(EVENT.PAUSE);
                     } else {
-                        if(mpPrepared) {
+                        if (mpPrepared) {
                             mediaPlayer.start();
                             sendBroadcastToActivity(EVENT.START_PLAY);
                         }
@@ -581,15 +581,18 @@ public class AudioService extends Service implements
                 builder.setVibrate(null);
 
                 Notification notification = builder.build();
+                startForeground(NOTIFICATION_ID, notification);
 
                 String imageUrl = currentTrack.getUrlImage();
                 if (imageUrl != null && !imageUrl.isEmpty()) {
                     Picasso.with(this)
                             .load(imageUrl)
                             .into(contentView, R.id.image, NOTIFICATION_ID, notification);
+                } else {
+                    Picasso.with(this)
+                            .load(R.mipmap.ic_launcher)
+                            .into(contentView, R.id.image, NOTIFICATION_ID, notification);
                 }
-
-                startForeground(NOTIFICATION_ID, notification);
             }
         } catch (Exception e) {
             Logger.error(e);

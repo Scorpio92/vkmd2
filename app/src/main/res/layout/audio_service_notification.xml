@@ -39,7 +39,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-condensed"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:maxLines="1"
                 android:text="Track name"
                 android:textColor="@color/colorPrimaryDark" />
