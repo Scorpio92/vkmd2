@@ -20,4 +20,12 @@ public interface API {
     @GET
     @Streaming
     Call<ResponseBody> downloadTrack(@Url String url);
+
+    @GET
+    @Streaming
+    Call<ResponseBody> getLastVersion(@Url String url);
+
+    @GET
+    @Streaming
+    Call<ResponseBody> downloadLastBuild(@Url String url);
 }

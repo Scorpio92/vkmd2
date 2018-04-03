@@ -7,7 +7,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "2.0"
 
         buildConfigField "String", "AUTHOR_URL", '"http://scorpio92.ru/about"'
 
@@ -19,13 +19,23 @@ android {
 
         buildConfigField "String", "APP_FOLDER", '"VKMD"'
         buildConfigField "String", "MUSIC_FOLDER", '"music"'
+        buildConfigField "String", "UPDATE_FOLDER", '"update"'
         buildConfigField "String", "DB_FOLDER", '"database"'
         buildConfigField "String", "DB_NAME", '"vkmd.db"'
 
+        //FOR APP UPDATE
+        buildConfigField "String", "GITHUB_REPO_RAW_URL", '"https://raw.githubusercontent.com/Scorpio92/vkmd2/master"'
+        buildConfigField "String", "GITHUB_REPO_BUILD_CONFIG_URL", '"/app/build.gradle"'
+        buildConfigField "String", "GITHUB_REPO_RELEASE_FOLDER", '"/release"'
+        buildConfigField "String", "BUILD_MAIN_APP_NAME", '"vkmd-release"'
     }
     buildTypes {
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+                outputFileName = "vkmd-${variant.name}-${variant.versionName}.apk"
+            }
+        }
         debug {
-            applicationIdSuffix '.debug'
             debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

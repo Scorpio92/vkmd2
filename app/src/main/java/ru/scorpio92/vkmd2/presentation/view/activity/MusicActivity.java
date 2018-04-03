@@ -40,6 +40,7 @@ import android.widget.SeekBar;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,10 +109,12 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         LocalBroadcastManager.getInstance(this).registerReceiver(syncServiceEventsReceiver, new IntentFilter(SyncService.SERVICE_BROADCAST));
 
 
+        getPresenter().checkForUpdate();
         getPresenter().getTrackList();
         startService(new Intent(this, SyncService.class)
                 .putExtra(SyncService.SERVICE_ACTION, SyncService.ACTION.START.name())
                 .putExtra(SyncService.IS_AUTO_SYNC, true));
+
     }
 
     @Override
@@ -158,6 +161,26 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
     public void showProgress(boolean show) {
         trackListContainer.setVisibility(View.GONE);
         progress.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void showUpdateDialog(String apkPath) {
+        AlertDialog.Builder builder = Dialog.getAlertDialogBuilder(getString(R.string.dialog_title), getString(R.string.dialog_update), MusicActivity.this);
+        builder.setNegativeButton(getString(R.string.dialog_no), (dialog, which) -> dialog.dismiss());
+        builder.setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> {
+            startService(new Intent(MusicActivity.this, AudioService.class)
+                    .putExtra(AudioService.SERVICE_ACTION, AudioService.ACTION.STOP.name())
+            );
+            startService(new Intent(MusicActivity.this, SyncService.class)
+                    .putExtra(SyncService.SERVICE_ACTION, SyncService.ACTION.STOP.name())
+            );
+            Intent promptInstall = new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.fromFile(new File(apkPath)),"application/vnd.android.package-archive");
+            startActivity(promptInstall);
+
+            App.finish();
+            finish();
+        });
+        builder.show();
     }
 
     @Override

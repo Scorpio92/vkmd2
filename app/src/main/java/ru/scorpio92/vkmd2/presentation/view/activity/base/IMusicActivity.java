@@ -7,6 +7,8 @@ import ru.scorpio92.vkmd2.data.entity.Track;
 
 public interface IMusicActivity extends IBaseView {
 
+    void showUpdateDialog(String path);
+
     void showTrackList(List<Track> trackList);
 
     void showMusicFooterInfo(String artist, String trackName, int duration, String imageUrl);

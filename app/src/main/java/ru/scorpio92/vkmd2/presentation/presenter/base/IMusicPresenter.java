@@ -5,6 +5,8 @@ import java.util.List;
 
 public interface IMusicPresenter extends IBasePresenter {
 
+    void checkForUpdate();
+
     void getTrackList();
 
     void getSavedTrackList();

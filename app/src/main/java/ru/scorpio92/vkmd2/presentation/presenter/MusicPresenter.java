@@ -3,6 +3,7 @@ package ru.scorpio92.vkmd2.presentation.presenter;
 import java.util.List;
 
 import ru.scorpio92.vkmd2.data.entity.Track;
+import ru.scorpio92.vkmd2.domain.usecase.CheckUpdateUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.GetOnlineTracksUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.GetSavedTrackListUsecase;
 import ru.scorpio92.vkmd2.domain.usecase.GetTrackListFromDBUsecase;
@@ -25,17 +26,39 @@ public class MusicPresenter extends AbstractPresenter<IMusicActivity> implements
     private GetSavedTrackListUsecase getSavedTrackListUsecase;
     private SaveOfflineSearchUsecase saveOfflineSearchUsecase;
     private SaveDownloadListUsecase saveDownloadListUsecase;
+    private CheckUpdateUsecase checkUpdateUsecase;
 
     public MusicPresenter(IMusicActivity view) {
         super(view);
         getTrackListFromDBUsecase = new GetTrackListFromDBUsecase();
         getSavedTrackListUsecase = new GetSavedTrackListUsecase();
+        checkUpdateUsecase = new CheckUpdateUsecase();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         cancelUsecases();
+    }
+
+    @Override
+    public void checkForUpdate() {
+        checkUpdateUsecase.execute(new SingleObserver<String>() {
+            @Override
+            public void onNext(String path) {
+                if(path.isEmpty()) {
+                    Logger.log("CheckUpdate: no update");
+                } else {
+                    Logger.log("CheckUpdate: " + path);
+                    getView().showUpdateDialog(path);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.error((Exception) e);
+            }
+        });
     }
 
     @Override
@@ -157,6 +180,7 @@ public class MusicPresenter extends AbstractPresenter<IMusicActivity> implements
     }
 
     private void cancelUsecases() {
+        checkUpdateUsecase.cancel();
         getSavedTrackListUsecase.cancel();
         getTrackListFromDBUsecase.cancel();
         if (getOnlineTracksUsecase != null)
