@@ -57,13 +57,13 @@ public class UpdateRepo extends RetrofitNetworkRepository<API> implements IUpdat
         return Observable.fromCallable(() -> {
             ResponseBody body = getApiInterface().downloadLastBuild(BuildConfig.GITHUB_REPO_RAW_URL
                     + BuildConfig.GITHUB_REPO_RELEASE_FOLDER + "/"
-                    + BuildConfig.BUILD_MAIN_APP_NAME + "-" + version)
+                    + BuildConfig.BUILD_MAIN_APP_NAME + "-" + version + ".apk")
                     .execute().body();
 
             InputStream bis = new BufferedInputStream(body.byteStream(), 1024 * 8);
             String path = App.APP_DIR + "/"
                     + BuildConfig.UPDATE_FOLDER + "/"
-                    + BuildConfig.BUILD_MAIN_APP_NAME + "-" + version;
+                    + BuildConfig.BUILD_MAIN_APP_NAME + "-" + version + ".apk";
             File outputFile = new File(path);
             OutputStream output = new FileOutputStream(outputFile);
 
