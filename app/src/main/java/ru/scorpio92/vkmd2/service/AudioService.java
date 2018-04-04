@@ -590,7 +590,7 @@ public class AudioService extends Service implements
                             .into(contentView, R.id.image, NOTIFICATION_ID, notification);
                 } else {
                     Picasso.with(this)
-                            .load(R.mipmap.ic_launcher)
+                            .load(R.mipmap.note)
                             .into(contentView, R.id.image, NOTIFICATION_ID, notification);
                 }
             }

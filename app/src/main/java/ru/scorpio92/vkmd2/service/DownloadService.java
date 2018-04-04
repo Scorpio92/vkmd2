@@ -341,7 +341,7 @@ public class DownloadService extends Service {
             builder.setContentIntent(pendingIntent);
             builder.setContent(contentView);
             builder.setCustomBigContentView(contentView);
-            builder.setSmallIcon(R.mipmap.ic_file_download_black_24dp);
+            builder.setSmallIcon(R.mipmap.note);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 builder.setVisibility(Notification.VISIBILITY_PUBLIC);
             }
