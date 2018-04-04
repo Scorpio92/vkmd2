@@ -14,9 +14,10 @@ https://toster.ru/q/398540
 
 Эти посты дали мне правильную наводку. Благодаря переписанному на java php-скрипту с тостера (пост ImIeee) смог реализовать расшифровку ссылок на аудиозаписи.
 
-## Скриншоты приложения
-
-<img src="/screenshots/device-2018-04-04-230525.png" width="40%">  <img src="/screenshots/device-2018-04-04-230401.png" width="40%">  <img src="/screenshots/device-2018-04-04-230434.png" width="40%">  <img src="/screenshots/device-2018-04-04-230604.png" width="40%">  <img src="/screenshots/device-2018-04-04-230729.png" width="40%">
+<details>
+  <summary>Скриншоты приложения</summary>
+  <img src="/screenshots/device-2018-04-04-230525.png" width="40%">  <img src="/screenshots/device-2018-04-04-230401.png" width="40%">  <img src="/screenshots/device-2018-04-04-230434.png" width="40%">  <img src="/screenshots/device-2018-04-04-230604.png" width="40%">  <img src="/screenshots/device-2018-04-04-230729.png" width="40%">
+</details>
 
 ## Что следует знать перед началом использования?
 
