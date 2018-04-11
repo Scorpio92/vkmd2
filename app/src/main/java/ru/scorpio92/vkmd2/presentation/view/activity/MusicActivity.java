@@ -14,6 +14,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -173,8 +174,20 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
             startService(new Intent(MusicActivity.this, SyncService.class)
                     .putExtra(SyncService.SERVICE_ACTION, SyncService.ACTION.STOP.name())
             );
-            Intent promptInstall = new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.fromFile(new File(apkPath)), "application/vnd.android.package-archive");
-            startActivity(promptInstall);
+            Intent promptInstall = new Intent(Intent.ACTION_VIEW);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Uri apkURI = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", new File(apkPath));
+                promptInstall.setDataAndType(apkURI, "application/vnd.android.package-archive");
+                promptInstall.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            } else {
+                promptInstall.setDataAndType(Uri.fromFile(new File(apkPath)), "application/vnd.android.package-archive");
+            }
+            try {
+                startActivity(promptInstall);
+            } catch (Exception e) {
+                Logger.error(e);
+                showToast("Что-то пошло не так...");
+            }
 
             App.finish();
             finish();

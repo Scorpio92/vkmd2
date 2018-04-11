@@ -7,7 +7,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
-        versionName "2.0"
+        versionName "2.1"
 
         buildConfigField "String", "AUTHOR_URL", '"http://scorpio92.ru/about"'
 
