@@ -396,6 +396,8 @@ public class AudioService extends Service implements
                         intent.putExtra(AUDIO_TRACK_IMAGE_URL_PARAM, currentTrack.getUrlImage());
                         intent.putExtra(AUDIO_TRACK_PROGRESS_PARAM, mediaPlayer.getCurrentPosition());
                         intent.putExtra(AUDIO_TRACK_IS_PLAY_PARAM, mediaPlayer.isPlaying());
+                    } else {
+                        throw new IllegalArgumentException("currentTrack is null");
                     }
                     break;
                 case PREPARE_FOR_PLAY:

@@ -114,7 +114,6 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         startService(new Intent(this, SyncService.class)
                 .putExtra(SyncService.SERVICE_ACTION, SyncService.ACTION.START.name())
                 .putExtra(SyncService.IS_AUTO_SYNC, true));
-
     }
 
     @Override
@@ -174,7 +173,7 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
             startService(new Intent(MusicActivity.this, SyncService.class)
                     .putExtra(SyncService.SERVICE_ACTION, SyncService.ACTION.STOP.name())
             );
-            Intent promptInstall = new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.fromFile(new File(apkPath)),"application/vnd.android.package-archive");
+            Intent promptInstall = new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.fromFile(new File(apkPath)), "application/vnd.android.package-archive");
             startActivity(promptInstall);
 
             App.finish();
