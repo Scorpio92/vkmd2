@@ -63,9 +63,16 @@ public class MusicPresenter extends AbstractPresenter<IMusicActivity> implements
 
     @Override
     public void getTrackList() {
-        getView().showProgress(true);
+        getView().showOnlineSearchProgress(false);
+        if(getOnlineTracksUsecase != null)
+            getOnlineTracksUsecase.cancel();
 
         getTrackListFromDBUsecase.execute(new SingleObserver<List<Track>>() {
+            @Override
+            protected void onStart() {
+                getView().showProgress(true);
+            }
+
             @Override
             public void onNext(List<Track> tracks) {
                 if (checkViewState()) {
@@ -87,9 +94,16 @@ public class MusicPresenter extends AbstractPresenter<IMusicActivity> implements
 
     @Override
     public void getSavedTrackList() {
-        getView().showProgress(true);
+        getView().showOnlineSearchProgress(false);
+        if(getOnlineTracksUsecase != null)
+            getOnlineTracksUsecase.cancel();
 
         getSavedTrackListUsecase.execute(new SingleObserver<List<Track>>() {
+            @Override
+            protected void onStart() {
+                getView().showProgress(true);
+            }
+
             @Override
             public void onNext(List<Track> tracks) {
                 if (checkViewState()) {

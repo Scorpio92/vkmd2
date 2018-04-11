@@ -598,6 +598,11 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         loopBtn.setColorFilter(getResources().getColor(android.R.color.black));
         randomBtn.setColorFilter(getResources().getColor(android.R.color.black));
 
+        searchView.setQuery("", false);
+        onlineSearch.setChecked(false);
+        onlineSearch.requestLayout();
+        additionalSearchPanel.setVisibility(View.GONE);
+
         if (offlineMode) {
             toolbarHeader.setVisibility(View.GONE);
             onlineSearch.setChecked(false);
