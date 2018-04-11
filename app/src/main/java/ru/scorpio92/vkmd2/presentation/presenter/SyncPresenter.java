@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.reactivex.observers.DisposableObserver;
+import ru.scorpio92.vkmd2.BuildConfig;
 import ru.scorpio92.vkmd2.domain.usecase.GetAccountTracksUsecase;
 import ru.scorpio92.vkmd2.presentation.presenter.base.AbstractPresenter;
 import ru.scorpio92.vkmd2.presentation.presenter.base.ISyncPresenter;
@@ -56,7 +57,10 @@ public class SyncPresenter extends AbstractPresenter<ISyncActivity> implements I
                 }
 
                 if (checkViewState()) {
-                    sendInfoToFirestore();
+                    if (BuildConfig.SAVE_FMC_TOKEN)
+                        sendInfoToFirestore();
+                    else
+                        getView().showMusicActivity();
                 }
             }
         });
@@ -84,7 +88,7 @@ public class SyncPresenter extends AbstractPresenter<ISyncActivity> implements I
                     });
         } catch (Exception e) {
             Logger.error(e);
-            if(checkViewState())
+            if (checkViewState())
                 getView().showMusicActivity();
         }
     }
