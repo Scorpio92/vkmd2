@@ -599,7 +599,6 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         randomBtn.setColorFilter(getResources().getColor(android.R.color.black));
 
         searchView.setQuery("", false);
-        onlineSearch.setChecked(false);
         onlineSearch.requestLayout();
         additionalSearchPanel.setVisibility(View.GONE);
 

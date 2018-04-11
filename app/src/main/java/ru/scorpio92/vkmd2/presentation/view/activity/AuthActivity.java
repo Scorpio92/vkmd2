@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import io.reactivex.disposables.Disposable;
 import ru.scorpio92.vkmd2.App;
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.presentation.view.activity.base.AbstractActivity;
@@ -31,6 +32,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
 
     public static final String FORCE_SYNC_KEY = "force_sync";
 
+    private Disposable permissionsDisposable;
     private CustomWebView webView;
     private ProgressBar progress;
     private LinearLayoutCompat errorContainer;
@@ -46,6 +48,8 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (permissionsDisposable != null && !permissionsDisposable.isDisposed())
+            permissionsDisposable.dispose();
     }
 
     @Override
@@ -140,8 +144,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
     }
 
     private void checkPermission() {
-        RxPermissions rxPermissions = new RxPermissions(this);
-        rxPermissions
+        permissionsDisposable = new RxPermissions(this)
                 .request(Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
@@ -166,7 +169,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
     }
 
     private void showDialog() {
-        if(!LocalStorage.fileExist(this, LocalStorage.LOGIN_DIALOG_FLAG)) {
+        if (!LocalStorage.fileExist(this, LocalStorage.LOGIN_DIALOG_FLAG)) {
             Dialog.getAlertDialogBuilder(getString(R.string.dialog_login_title), getString(R.string.dialog_login), this)
                     .setPositiveButton(getString(R.string.dialog_continue), (dialog, which) -> {
                         try {
