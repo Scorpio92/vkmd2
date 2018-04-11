@@ -11,6 +11,7 @@ import ru.scorpio92.vkmd2.presentation.view.fragment.SettingsFragment;
 public class SettingsActivity extends AppCompatActivity {
 
     public static final String ACTIVE_KEY = "activeMode";
+    public static final String CIRCULAR_PLAYING_KEY = "circularPlaying";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

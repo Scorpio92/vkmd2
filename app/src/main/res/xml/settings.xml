@@ -7,4 +7,10 @@
         android:summary="@string/active_mode_summary"
         android:title="@string/active_mode_title" />
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="circularPlaying"
+        android:summary="@string/circular_playing_summary"
+        android:title="@string/circular_playing_title" />
+
 </PreferenceScreen>

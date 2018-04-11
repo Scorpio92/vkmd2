@@ -30,11 +30,13 @@ public class TrackProvider implements ITrackProvider {
     private AppDatabase appDatabase;
 
     private boolean randomEnabled;
+    private boolean circularPlaying;
 
 
-    public TrackProvider(PROVIDER provider) {
+    public TrackProvider(PROVIDER provider, boolean circularPlaying) {
         Logger.log("TrackProvider", provider.name());
         this.provider = provider;
+        this.circularPlaying = circularPlaying;
         this.appDatabase = AppDatabase.getInstance();
     }
 
@@ -110,6 +112,10 @@ public class TrackProvider implements ITrackProvider {
                         cachedTrack = AppDatabase.getInstance().cacheDAO().getTrackByTrackId(getRandomTrackId());
                     } else {
                         cachedTrack = AppDatabase.getInstance().cacheDAO().getNext(currentTrack.getId());
+                        if(cachedTrack == null && circularPlaying) {
+                            int rowId = AppDatabase.getInstance().cacheDAO().getFirstRowId();
+                            cachedTrack = AppDatabase.getInstance().cacheDAO().getById(rowId);
+                        }
                     }
                     if (cachedTrack != null)
                         track = VkmdUtils.convertCachedTrackToBase(cachedTrack);
@@ -119,21 +125,37 @@ public class TrackProvider implements ITrackProvider {
                         track = getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByTrackId(getRandomTrackId()));
                     } else {
                         track = getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByPosition(currentTrackPosition));
+                        if(track == null && circularPlaying)
+                            track = getTrackWithSaveInfo(appDatabase.trackDAO().getTrackByPosition(1));
                     }
                     break;
                 case ONLINE_SEARCH_TABLE:
                     if (randomEnabled) {
                         track = getTrackWithSaveInfo(VkmdUtils.convertOnlineTrackToBase(appDatabase.onlineTrackDAO().getTrackByTrackId(getRandomTrackId())));
                     } else {
-                        track = getTrackWithSaveInfo(VkmdUtils.convertOnlineTrackToBase(appDatabase.onlineTrackDAO().getTrackByPosition(currentTrackPosition)));
+                        try {
+                            track = getTrackWithSaveInfo(VkmdUtils.convertOnlineTrackToBase(appDatabase.onlineTrackDAO().getTrackByPosition(currentTrackPosition)));
+                        } catch (Exception e) {
+                            if (circularPlaying)
+                                track = getTrackWithSaveInfo(VkmdUtils.convertOnlineTrackToBase(appDatabase.onlineTrackDAO().getTrackByPosition(1)));
+                            else
+                                throw new Exception("end online search playlist");
+                        }
                     }
                     break;
                 case OFFLINE_SEARCH_TABLE:
-                    String trackId;
+                    String trackId = null;
                     if (randomEnabled) {
                         trackId = getRandomTrackId();
                     } else {
-                        trackId = appDatabase.offlineSearchDAO().getOfflineSearchItemById(currentTrackPosition).getTrackId();
+                        try {
+                            trackId = appDatabase.offlineSearchDAO().getOfflineSearchItemById(currentTrackPosition).getTrackId();
+                        } catch (Exception e) {
+                            if (circularPlaying)
+                                trackId = appDatabase.offlineSearchDAO().getOfflineSearchItemById(1).getTrackId();
+                            else
+                                throw new Exception("end offline search playlist");
+                        }
                     }
                     track = appDatabase.trackDAO().getTrackByTrackId(trackId);
                     track.setId(currentTrackPosition);

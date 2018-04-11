@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -36,6 +37,7 @@ import ru.scorpio92.vkmd2.data.entity.Track;
 import ru.scorpio92.vkmd2.data.repository.db.TrackProvider;
 import ru.scorpio92.vkmd2.data.repository.db.base.ITrackProvider;
 import ru.scorpio92.vkmd2.presentation.view.activity.MusicActivity;
+import ru.scorpio92.vkmd2.presentation.view.activity.SettingsActivity;
 import ru.scorpio92.vkmd2.receiver.AudioServiceNotificationReceiver;
 import ru.scorpio92.vkmd2.receiver.HeadsetPlugReceiver;
 import ru.scorpio92.vkmd2.receiver.LockScreenReceiver;
@@ -335,7 +337,8 @@ public class AudioService extends Service implements
         if (provider == null)
             return;
 
-        trackProvider = new TrackProvider(Enum.valueOf(TrackProvider.PROVIDER.class, provider));
+        boolean circularPlaying = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsActivity.CIRCULAR_PLAYING_KEY, false);
+        trackProvider = new TrackProvider(Enum.valueOf(TrackProvider.PROVIDER.class, provider), circularPlaying);
         trackProvider.setRandomEnabled(randomIsEnabled);
     }
 

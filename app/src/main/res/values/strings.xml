@@ -17,6 +17,8 @@
     <string name="settings">Настройки</string>
     <string name="active_mode_summary">Выполнять авторизацию ВК и синхронизацию аудио при каждом входе в приложение</string>
     <string name="active_mode_title">Активный режим</string>
+    <string name="circular_playing_summary">Когда в текущем плейлисте заканчивается воспроизведение текущей аудиозаписи, воспроизведение начинается с первой</string>
+    <string name="circular_playing_title">Круговое проигрывание</string>
     <string name="about">O приложении</string>
     <string name="faq">FAQ</string>
     <string name="deauthorize">Деавторизоваться</string>

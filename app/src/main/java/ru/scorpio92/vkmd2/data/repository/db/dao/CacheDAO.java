@@ -46,6 +46,9 @@ public interface CacheDAO {
     @Query("SELECT * FROM DownloadTable WHERE trackId == :trackId")
     CachedTrack getTrackByTrackId(String trackId);
 
+    @Query("SELECT id FROM DownloadTable ORDER BY id LIMIT 1")
+    int getFirstRowId();
+
     @Query("SELECT id FROM DownloadTable ORDER BY id DESC LIMIT 1")
     int getLastRowId();
 
@@ -54,6 +57,9 @@ public interface CacheDAO {
 
     @Query("SELECT * FROM DownloadTable WHERE id > :id ORDER BY id LIMIT 1")
     CachedTrack getNext(int id);
+
+    @Query("SELECT * FROM DownloadTable WHERE id == :id")
+    CachedTrack getById(int id);
 
     @Query("SELECT trackId FROM DownloadTable")
     List<String> getTrackIdList();
