@@ -14,7 +14,7 @@ class TrackListViewHolder extends RecyclerView.ViewHolder {
 
     AppCompatCheckBox checkBox;
     CardView cardView;
-    AppCompatTextView trackName, trackArtist;
+    AppCompatTextView trackName, trackArtist, trackDuration;
     ImageView saved;
 
     TrackListViewHolder(View itemView) {
@@ -23,6 +23,7 @@ class TrackListViewHolder extends RecyclerView.ViewHolder {
         cardView = itemView.findViewById(R.id.cv);
         trackName = itemView.findViewById(R.id.trackName);
         trackArtist = itemView.findViewById(R.id.trackArtist);
+        trackDuration = itemView.findViewById(R.id.trackDuration);
         saved = itemView.findViewById(R.id.saved);
     }
 }

@@ -55,18 +55,37 @@
                     android:ellipsize="end"
                     android:fontFamily="sans-serif-light"
                     android:maxLines="1"
-                    android:text="artist" />
+                    android:text="artist"
+                    android:paddingRight="@dimen/dp_12"/>
 
             </android.support.v7.widget.LinearLayoutCompat>
 
-            <ImageView
-                android:id="@+id/saved"
-                android:layout_width="@dimen/dp_24"
-                android:layout_height="@dimen/dp_24"
-                android:layout_gravity="center_vertical"
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                android:src="@mipmap/ic_saved"
-                android:visibility="visible" />
+                <ImageView
+                    android:id="@+id/saved"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_gravity="end"
+                    android:src="@mipmap/ic_saved"
+                    android:visibility="visible" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/trackDuration"
+                    style="@style/TextStyle"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:ellipsize="end"
+                    android:gravity="bottom"
+                    android:fontFamily="sans-serif-light"
+                    android:textSize="@dimen/sp_10"
+                    android:textColor="@color/colorPrimaryDark" />
+
+            </android.support.v7.widget.LinearLayoutCompat>
 
         </android.support.v7.widget.LinearLayoutCompat>
 

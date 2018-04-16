@@ -2,6 +2,7 @@ package ru.scorpio92.vkmd2.presentation.view.adapter;
 
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.data.entity.Track;
+import ru.scorpio92.vkmd2.tools.DateUtils;
 
 public class TrackListAdapter extends RecyclerView.Adapter<TrackListViewHolder> implements Filterable {
 
@@ -41,13 +43,14 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListViewHolder> 
         setHasStableIds(true);
     }
 
+    @NonNull
     @Override
-    public TrackListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TrackListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new TrackListViewHolder(LayoutInflater.from(context).inflate(R.layout.track_list_row, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(TrackListViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TrackListViewHolder holder, int position) {
         Track track = trackList.get(position);
 
         holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -78,6 +81,8 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListViewHolder> 
             holder.trackName.setTextColor(ContextCompat.getColor(context, R.color.colorFont));
         }
 
+        holder.trackDuration.setText(DateUtils.getHumanTimeFromMilliseconds(track.getDuration() * 1000));
+
         holder.saved.setVisibility(track.isSaved() ? View.VISIBLE : View.GONE);
 
         holder.cardView.setOnClickListener(v -> {
@@ -90,18 +95,6 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListViewHolder> 
             holder.checkBox.setChecked(true);
             return true;
         });
-
-        /*new SwipeDetector(holder.cardView).setOnSwipeListener((v, SwipeType) -> {
-            Logger.log("SWIPE DETECTED: " + SwipeType.name());
-            switch (SwipeType) {
-                case LEFT_TO_RIGHT:
-                    holder.checkBox.setVisibility(View.VISIBLE);
-                    break;
-                case RIGHT_TO_LEFT:
-                    holder.checkBox.setVisibility(View.GONE);
-                    break;
-            }
-        });*/
     }
 
     @Override
