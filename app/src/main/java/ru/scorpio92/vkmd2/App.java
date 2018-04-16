@@ -3,6 +3,9 @@ package ru.scorpio92.vkmd2;
 import android.app.Application;
 import android.os.Environment;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
 import ru.scorpio92.vkmd2.data.repository.db.base.AppDatabase;
 
 
@@ -13,6 +16,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
     }
 
     public void init() {
