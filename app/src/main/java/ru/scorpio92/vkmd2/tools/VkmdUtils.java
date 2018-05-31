@@ -133,9 +133,9 @@ public class VkmdUtils {
     public static List<Track> getTrackListFromPageCode(String sourceCode) {
         String jString = null;
 
-        Pattern p = Pattern.compile("\\[.*https.*jpg\\)\\\",false\\]");
+        Pattern p = Pattern.compile("\\[.*https.*jpg\\).*]");
         Matcher m = p.matcher(sourceCode);
-        while (m.find()) {
+        if (m.find()) {
             jString = m.group().replaceAll("^.*cache\":", "") + "}";
         }
 
@@ -167,7 +167,7 @@ public class VkmdUtils {
                         trackList.add(track);
                         idx++;
                     } catch (Exception e) {
-                        //e.printStackTrace();
+                        Logger.error(e);
                     }
                 }
             } catch (Exception e) {

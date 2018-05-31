@@ -16,6 +16,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import ru.scorpio92.vkmd2.BuildConfig;
 
 public abstract class RetrofitNetworkRepository<I> implements IRetrofitNetworkRepository {
 
@@ -34,7 +35,7 @@ public abstract class RetrofitNetworkRepository<I> implements IRetrofitNetworkRe
     }
 
     protected boolean enableLogging() {
-        return true;
+        return BuildConfig.DEBUG;
     }
 
     private Retrofit init(String baseURL) {
