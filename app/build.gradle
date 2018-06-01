@@ -42,6 +42,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
+            //ext.enableCrashlytics = false
+
             buildConfigField "boolean", "SAVE_FMC_TOKEN", 'false'
         }
         release {
