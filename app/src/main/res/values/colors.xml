@@ -7,6 +7,13 @@
     <color name="colorRed">#EE3224</color>
     <color name="colorFont">#2B2B2B</color>
     <color name="colorDarkGrey">#c2c2c2</color>
+    <color name="colorWhite">#ffffff</color>
     <color name="colorTransparent">#80aab3f1</color>
     <color name="ic_launcher_background">#3F51B5</color>
+
+    <array name="visual_waves_colors">
+        <item>#6574c6</item>
+        <item>@color/colorPrimary</item>
+        <item>@color/colorPrimaryDark</item>
+    </array>
 </resources>

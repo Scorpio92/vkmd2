@@ -18,4 +18,10 @@
     <dimen name="sp_12">12sp</dimen>
     <dimen name="sp_14">14sp</dimen>
     <dimen name="sp_16">16sp</dimen>
+
+    <!--Визуализация аудио-->
+    <dimen name="visual_bubble_size">40dp</dimen>
+    <dimen name="visual_wave_height">60dp</dimen>
+    <dimen name="visual_footer_height">160dp</dimen>
+
 </resources>

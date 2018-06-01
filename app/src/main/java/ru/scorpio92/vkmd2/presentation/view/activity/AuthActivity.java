@@ -146,7 +146,9 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
     private void checkPermission() {
         permissionsDisposable = new RxPermissions(this)
                 .request(Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS)
                 .subscribe(granted -> {
                     if (granted) {
                         ((App) getApplication()).init();

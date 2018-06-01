@@ -38,6 +38,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
+import com.cleveroad.audiovisualization.AudioVisualization;
+import com.cleveroad.audiovisualization.DbmHandler;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -90,6 +92,8 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
     private volatile ProgressBar pickerProgress, prepareProgress;
     private AppCompatSeekBar playProgress;
 
+    private AudioVisualization audioVisualization;
+
     private String provider = TrackProvider.PROVIDER.ACCOUNT_TABLE.name();
 
     private boolean offlineMode = false;
@@ -121,10 +125,22 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
     protected void onResume() {
         super.onResume();
         trackListView.requestFocus();
+        visualizeAudio(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        visualizeAudio(false);
     }
 
     @Override
     protected void onDestroy() {
+        try {
+            audioVisualization.release();
+        } catch (Exception e) {
+            Logger.error(e);
+        }
         super.onDestroy();
         if (audioServiceEventsReceiver != null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(audioServiceEventsReceiver);
@@ -255,6 +271,11 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         } else {
             pickerProgress.postDelayed(() -> pickerProgress.setVisibility(View.GONE), 500);
         }
+        //при старте проигрывания привязываем визуалайзер к текущей сессии воспроизведения
+        if (!show)
+            audioVisualization.linkTo(DbmHandler.Factory.newVisualizerHandler(getViewContext(), 0));
+
+        visualizeAudio(!show && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override
@@ -442,24 +463,37 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         });
 
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            boolean allowVisualize = true;
+
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
                     case BottomSheetBehavior.STATE_EXPANDED:
                         toolbarHeader.setVisibility(View.GONE);
+                        visualizeAudio(true);
+                        allowVisualize = true;
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        toolbarHeader.setVisibility(View.VISIBLE);
+                        visualizeAudio(false);
+                        allowVisualize = true;
                         break;
                     default:
-                        toolbarHeader.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 fab.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
+                if (allowVisualize) {
+                    allowVisualize = false;
+                    visualizeAudio(true);
+                }
             }
         });
 
         trackImage = findViewById(R.id.image);
+        audioVisualization = findViewById(R.id.visualizerView);
 
         trackName = findViewById(R.id.trackName);
         trackArtist = findViewById(R.id.artist);
@@ -527,6 +561,18 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
         randomBtn.setOnClickListener(v -> startService(new Intent(MusicActivity.this, AudioService.class)
                 .putExtra(AudioService.SERVICE_ACTION, AudioService.ACTION.RANDOM_FEATURE.name())
         ));
+    }
+
+    private void visualizeAudio(boolean visualize) {
+        try {
+            if (visualize) {
+                audioVisualization.onResume();
+            } else {
+                audioVisualization.onPause();
+            }
+        } catch (Exception e) {
+            Logger.error(e);
+        }
     }
 
     private void hideAdditionalButtonsInToolbar() {

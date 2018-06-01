@@ -85,7 +85,22 @@
             <ImageView
                 android:id="@+id/image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+            <com.cleveroad.audiovisualization.GLAudioVisualizationView
+                android:id="@+id/visualizerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:av_backgroundColor="@color/colorWhite"
+                app:av_bubblesPerLayer="16"
+                app:av_bubblesRandomizeSizes="true"
+                app:av_bubblesSize="@dimen/visual_bubble_size"
+                app:av_layersCount="3"
+                app:av_wavesColors="@array/visual_waves_colors"
+                app:av_wavesCount="6"
+                app:av_wavesFooterHeight="@dimen/visual_footer_height"
+                app:av_wavesHeight="@dimen/visual_wave_height" />
 
         </android.support.v7.widget.LinearLayoutCompat>
 
