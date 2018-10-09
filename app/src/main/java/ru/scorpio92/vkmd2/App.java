@@ -1,6 +1,5 @@
 package ru.scorpio92.vkmd2;
 
-import android.app.Application;
 import android.os.Environment;
 import android.support.multidex.MultiDexApplication;
 
