@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.data.repository.db.base;
+package ru.scorpio92.vkmd2.data.repository.db.base.old;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;

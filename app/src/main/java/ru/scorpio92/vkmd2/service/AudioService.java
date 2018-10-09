@@ -35,7 +35,7 @@ import java.util.Timer;
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.data.entity.Track;
 import ru.scorpio92.vkmd2.data.repository.db.TrackProvider;
-import ru.scorpio92.vkmd2.data.repository.db.base.ITrackProvider;
+import ru.scorpio92.vkmd2.data.repository.db.base.old.ITrackProvider;
 import ru.scorpio92.vkmd2.presentation.view.activity.MusicActivity;
 import ru.scorpio92.vkmd2.presentation.view.activity.SettingsActivity;
 import ru.scorpio92.vkmd2.receiver.AudioServiceNotificationReceiver;

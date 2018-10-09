@@ -6,7 +6,7 @@ import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
 import ru.scorpio92.vkmd2.data.entity.OfflineSearchItem;
-import ru.scorpio92.vkmd2.data.repository.db.base.AppDatabase;
+import ru.scorpio92.vkmd2.data.repository.db.base.old.AppDatabase;
 import ru.scorpio92.vkmd2.domain.usecase.base.RxAbstractUsecase;
 
 

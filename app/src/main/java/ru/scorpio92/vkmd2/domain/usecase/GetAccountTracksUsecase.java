@@ -5,7 +5,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import ru.scorpio92.vkmd2.data.entity.Track;
-import ru.scorpio92.vkmd2.data.repository.db.base.AppDatabase;
+import ru.scorpio92.vkmd2.data.repository.db.base.old.AppDatabase;
 import ru.scorpio92.vkmd2.data.repository.network.GetAudioRepo;
 import ru.scorpio92.vkmd2.domain.usecase.base.RxAbstractUsecase;
 import ru.scorpio92.vkmd2.tools.Logger;
