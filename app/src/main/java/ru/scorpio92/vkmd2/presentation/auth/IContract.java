@@ -9,6 +9,11 @@ public interface IContract {
     interface View extends IBaseView {
 
         /**
+         * Права предоставлены
+         */
+        void onPermissionNotGranted();
+
+        /**
          * начать загрузку страницы VK во WebView
          */
         void loadVkPage();
@@ -35,11 +40,6 @@ public interface IContract {
     }
 
     interface Presenter extends IBasePresenter, CustomWebViewClient.WebViewClientCallback {
-
-        /**
-         * Права предоставлены
-         */
-        void onPermissionGranted();
 
         /**
          * Пользователь прочитал диалог с предупреждением

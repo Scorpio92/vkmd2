@@ -16,6 +16,7 @@ android {
         buildConfigField "String", "BASE_URL", '"https://m.vk.com"'
         buildConfigField "String", "LOGIN_URL", '"https://m.vk.com/login"'
         buildConfigField "String", "AUDIO_URL", '"https://m.vk.com/audio"'
+        buildConfigField "String", "FEED_URL", '"https://m.vk.com/feed"'
 
         buildConfigField "int", "GET_AUDIO_OFFSET", '200'
 

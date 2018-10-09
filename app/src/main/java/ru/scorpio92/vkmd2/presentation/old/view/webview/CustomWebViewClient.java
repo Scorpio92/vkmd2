@@ -5,9 +5,9 @@ import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import ru.scorpio92.vkmd2.tools.Logger;
-
 import static ru.scorpio92.vkmd2.BuildConfig.AUDIO_URL;
+import static ru.scorpio92.vkmd2.BuildConfig.BASE_URL;
+import static ru.scorpio92.vkmd2.BuildConfig.FEED_URL;
 import static ru.scorpio92.vkmd2.BuildConfig.LOGIN_URL;
 
 
@@ -20,11 +20,10 @@ public class CustomWebViewClient extends WebViewClient {
 
         void onAuthPageLoaded();
 
-        void onAudioPageFinishLoad(String cookie);
+        void onCookieReady(String cookie);
 
         void onError();
     }
-
 
     CustomWebViewClient(WebViewClientCallback callback) {
         this.callback = callback;
@@ -44,20 +43,18 @@ public class CustomWebViewClient extends WebViewClient {
 
     @Override
     public void onPageFinished(WebView view, String url) {
-        Logger.log("onPageFinished", url);
         if (callback != null) {
-            if (url.contains(LOGIN_URL)) {
+            if (url.contains(LOGIN_URL) || url.equals(BASE_URL) || url.equals(BASE_URL.concat("/"))) {
                 callback.onAuthPageLoaded();
-            } else if (url.equals(AUDIO_URL)) {
+            } else if (url.equals(AUDIO_URL) || url.equals(FEED_URL)) {
                 final String cookies = CookieManager.getInstance().getCookie(url);
-                if(cookies == null) {
+                if (cookies == null) {
                     callback.onError();
                 } else {
-                    callback.onAudioPageFinishLoad(cookies);
+                    callback.onCookieReady(cookies);
                 }
-                //view.loadUrl("javascript:console.log('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
             } else {
-                callback.onAuthPageLoaded();
+                callback.onError();
             }
         }
     }

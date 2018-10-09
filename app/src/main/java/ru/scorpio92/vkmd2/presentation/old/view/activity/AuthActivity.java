@@ -107,7 +107,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
         }
 
         @Override
-        public void onAudioPageFinishLoad(String cookie) {
+        public void onCookieReady(String cookie) {
             try {
                 LocalStorage.setDataInFile(AuthActivity.this, LocalStorage.COOKIE_STORAGE, cookie);
                 showSyncActivity(cookie);
@@ -155,7 +155,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
                         Manifest.permission.MODIFY_AUDIO_SETTINGS)
                 .subscribe(granted -> {
                     if (granted) {
-                        ((App) getApplication()).init();
+                        //((App) getApplication()).init();
                         initUI();
                     } else {
                         showToast(getString(R.string.need_permissions));
