@@ -78,8 +78,13 @@ public class SyncPresenter extends AbstractPresenter<ISyncActivity> implements I
                     .add(user)
                     .addOnSuccessListener(documentReference -> {
                         Logger.log("DocumentSnapshot added with ID: " + documentReference.getId());
-                        if (getView().getViewContext() != null)
-                            LocalStorage.deleteFile(getView().getViewContext(), LocalStorage.FCM_TOKEN);
+                        if (getView().getViewContext() != null) {
+                            try {
+                                LocalStorage.deleteFile(getView().getViewContext(), LocalStorage.FCM_TOKEN);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                         getView().showMusicActivity();
                     })
                     .addOnFailureListener(e -> {

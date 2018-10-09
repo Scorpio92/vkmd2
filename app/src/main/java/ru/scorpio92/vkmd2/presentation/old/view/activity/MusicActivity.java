@@ -717,17 +717,21 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
     }
 
     private void onDeauthorize() {
-        if (LocalStorage.deleteFile(this, LocalStorage.COOKIE_STORAGE)) {
-            Logger.log("cookie file deleted");
-            startService(new Intent(MusicActivity.this, AudioService.class)
-                    .putExtra(AudioService.SERVICE_ACTION, AudioService.ACTION.STOP.name())
-            );
-            startService(new Intent(MusicActivity.this, SyncService.class)
-                    .putExtra(SyncService.SERVICE_ACTION, SyncService.ACTION.STOP.name())
-            );
+        try {
+            if (LocalStorage.deleteFile(this, LocalStorage.COOKIE_STORAGE)) {
+                Logger.log("cookie file deleted");
+                startService(new Intent(MusicActivity.this, AudioService.class)
+                        .putExtra(AudioService.SERVICE_ACTION, AudioService.ACTION.STOP.name())
+                );
+                startService(new Intent(MusicActivity.this, SyncService.class)
+                        .putExtra(SyncService.SERVICE_ACTION, SyncService.ACTION.STOP.name())
+                );
 
-            startActivity(new Intent(MusicActivity.this, AuthActivity.class));
-            finish();
+                startActivity(new Intent(MusicActivity.this, AuthActivity.class));
+                finish();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

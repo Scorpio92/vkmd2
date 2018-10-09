@@ -144,7 +144,7 @@ public class TrackProvider implements ITrackProvider {
                     }
                     break;
                 case OFFLINE_SEARCH_TABLE:
-                    String trackId = null;
+                    String trackId;
                     if (randomEnabled) {
                         trackId = getRandomTrackId();
                     } else {
