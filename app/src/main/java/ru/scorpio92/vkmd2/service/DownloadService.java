@@ -26,7 +26,7 @@ import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.data.entity.CachedTrack;
 import ru.scorpio92.vkmd2.data.repository.db.base.old.AppDatabase;
 import ru.scorpio92.vkmd2.data.repository.network.DownloadAudioRepo;
-import ru.scorpio92.vkmd2.presentation.view.activity.DownloadManagerActivity;
+import ru.scorpio92.vkmd2.presentation.old.view.activity.DownloadManagerActivity;
 import ru.scorpio92.vkmd2.tools.Logger;
 import ru.scorpio92.vkmd2.tools.VkmdUtils;
 

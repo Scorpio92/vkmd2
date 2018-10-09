@@ -33,7 +33,7 @@ public class LocalStorage {
         return temp.toString();
     }
 
-    public static boolean fileExist(Context context, String fileName) {
+    public static boolean fileExist(Context context, String fileName) throws Exception {
         String[] arrFileName = context.fileList();
         for (String item : arrFileName) {
             if (item.equals(fileName)) {
@@ -43,7 +43,7 @@ public class LocalStorage {
         return false;
     }
 
-    public static boolean deleteFile(Context context, String fileName) {
+    public static boolean deleteFile(Context context, String fileName) throws Exception {
         return context.deleteFile(fileName);
     }
 }

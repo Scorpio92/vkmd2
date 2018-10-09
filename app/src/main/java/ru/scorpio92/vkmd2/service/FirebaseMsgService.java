@@ -14,7 +14,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import ru.scorpio92.vkmd2.R;
-import ru.scorpio92.vkmd2.presentation.view.activity.AuthActivity;
+import ru.scorpio92.vkmd2.presentation.old.view.activity.AuthActivity;
 import ru.scorpio92.vkmd2.tools.JsonWorker;
 import ru.scorpio92.vkmd2.tools.Logger;
 

@@ -34,7 +34,7 @@
             android:value="@string/default_notification_channel_id"/>
 
         <activity
-            android:name=".presentation.view.activity.AuthActivity"
+            android:name=".presentation.old.view.activity.AuthActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,42 +44,42 @@
         </activity>
 
         <activity
-            android:name=".presentation.view.activity.SyncActivity"
+            android:name=".presentation.old.view.activity.SyncActivity"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".presentation.view.activity.MusicActivity"
+            android:name=".presentation.old.view.activity.MusicActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".presentation.view.activity.DownloadManagerActivity"
+            android:name=".presentation.old.view.activity.DownloadManagerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:parentActivityName=".presentation.view.activity.MusicActivity">
+            android:parentActivityName=".presentation.old.view.activity.MusicActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".presentation.view.activity.MusicActivity" />
+                android:value=".presentation.old.view.activity.MusicActivity" />
         </activity>
 
         <activity
-            android:name=".presentation.view.activity.SettingsActivity"
+            android:name=".presentation.old.view.activity.SettingsActivity"
             android:screenOrientation="portrait"
-            android:parentActivityName=".presentation.view.activity.MusicActivity">
+            android:parentActivityName=".presentation.old.view.activity.MusicActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".presentation.view.activity.MusicActivity" />
+                android:value=".presentation.old.view.activity.MusicActivity" />
         </activity>
 
         <activity
-            android:name=".presentation.view.activity.FaqActivity"
+            android:name=".presentation.old.view.activity.FaqActivity"
             android:screenOrientation="portrait"
-            android:parentActivityName=".presentation.view.activity.MusicActivity">
+            android:parentActivityName=".presentation.old.view.activity.MusicActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".presentation.view.activity.MusicActivity" />
+                android:value=".presentation.old.view.activity.MusicActivity" />
         </activity>
 
         <service

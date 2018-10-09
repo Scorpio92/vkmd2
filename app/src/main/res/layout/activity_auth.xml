@@ -5,13 +5,13 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <ru.scorpio92.vkmd2.presentation.view.webview.CustomWebView
+    <ru.scorpio92.vkmd2.presentation.old.view.webview.CustomWebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
 
-    </ru.scorpio92.vkmd2.presentation.view.webview.CustomWebView>
+    </ru.scorpio92.vkmd2.presentation.old.view.webview.CustomWebView>
 
     <ProgressBar
         android:id="@+id/progress"
