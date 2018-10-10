@@ -8,6 +8,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import ru.scorpio92.vkmd2.data.repository.internal.CookieDataSource;
 import ru.scorpio92.vkmd2.presentation.auth.AuthPresenter;
 import ru.scorpio92.vkmd2.presentation.auth.IContract;
+import ru.scorpio92.vkmd2.presentation.sync.SyncPresenter;
 
 public class PresenterInjection {
 
@@ -20,5 +21,9 @@ public class PresenterInjection {
                         Manifest.permission.MODIFY_AUDIO_SETTINGS),
                 new CookieDataSource()
         );
+    }
+
+    public static SyncPresenter provideSyncPresenter(@NonNull ru.scorpio92.vkmd2.presentation.sync.IContract.View view) {
+        return new SyncPresenter(view);
     }
 }

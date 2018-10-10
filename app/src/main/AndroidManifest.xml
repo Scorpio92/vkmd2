@@ -46,7 +46,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.old.view.activity.SyncActivity"
+            android:name=".presentation.sync.SyncActivity"
             android:screenOrientation="portrait">
         </activity>
 

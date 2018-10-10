@@ -85,6 +85,11 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
     }
 
     @Override
+    public void onBackPressed() {
+        finishApp();
+    }
+
+    @Override
     public void onPermissionNotGranted() {
         Dialog.getAlertDialogBuilder(null, getString(R.string.need_permissions), this)
                 .setPositiveButton(getString(R.string.retry), (dialog, which) -> {
