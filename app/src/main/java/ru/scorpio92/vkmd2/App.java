@@ -1,10 +1,10 @@
 package ru.scorpio92.vkmd2;
 
-import android.content.Context;
 import android.os.Environment;
 import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
+import com.squareup.leakcanary.LeakCanary;
 
 import io.fabric.sdk.android.Fabric;
 import ru.scorpio92.vkmd2.data.repository.db.base.old.AppDatabase;
@@ -18,6 +18,12 @@ public class App extends AbstractApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
         Fabric.with(this, new Crashlytics());
         MultiDex.install(getApplicationContext());
     }
@@ -27,9 +33,9 @@ public class App extends AbstractApplication {
     }
 
     @Override
-    public void onInitApp(Context context) {
+    public void onInitApp() {
         AbstractLocalDataSource.initialize(getApplicationContext(), null);
-        AppDatabase.initDB(context.getApplicationContext());
+        AppDatabase.initDB(getApplicationContext());
     }
 
     @Override

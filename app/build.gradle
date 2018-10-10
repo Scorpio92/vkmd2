@@ -109,6 +109,11 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.cleveroad:audiovisualization:1.0.0'
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+    // Optional, if you use support library fragments:
+    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

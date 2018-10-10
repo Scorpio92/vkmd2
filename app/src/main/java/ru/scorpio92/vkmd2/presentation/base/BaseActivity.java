@@ -43,7 +43,7 @@ public abstract class BaseActivity<P extends IBasePresenter> extends AppCompatAc
             mAppWatcher = ((AbstractApplication) getApplication());
             //если при создании активности требуется заново инициализировать глобальные объекты
             if (retryAppInitOnCreate()) {
-                mAppWatcher.onInitApp(getApplicationContext());
+                mAppWatcher.onInitApp();
             }
         } catch (Exception e) {
             //Тут я специально подавил исключение, т.к. использование IAppWatcher в приложении

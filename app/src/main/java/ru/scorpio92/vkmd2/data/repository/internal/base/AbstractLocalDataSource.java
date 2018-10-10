@@ -4,20 +4,29 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 
 public abstract class AbstractLocalDataSource {
 
-    private static volatile WeakReference<AndroidPrivateStorage> storageWeakReference;
+    private static WeakReference<Context> sContextWeakReference;
+    private static ISecurityProvider sSecurityProvider;
+    private static volatile SoftReference<AndroidPrivateStorage> sStorageSoftReference;
 
     public static void initialize(@NonNull Context context, @Nullable ISecurityProvider securityProvider) {
-        storageWeakReference = new WeakReference<>(new AndroidPrivateStorage(context, securityProvider));
+        sContextWeakReference = new WeakReference<>(context);
+        sSecurityProvider = securityProvider;
     }
 
     public static void close() {
-        if(storageWeakReference != null) {
-            storageWeakReference.clear();
-            storageWeakReference = null;
+        sSecurityProvider = null;
+        if (sContextWeakReference != null) {
+            sContextWeakReference.clear();
+            sContextWeakReference = null;
+        }
+        if (sStorageSoftReference != null) {
+            sStorageSoftReference.clear();
+            sStorageSoftReference = null;
         }
     }
 
@@ -26,7 +35,10 @@ public abstract class AbstractLocalDataSource {
     protected abstract boolean enableEncryption();
 
     private AndroidPrivateStorage getStorage() throws NullPointerException {
-        AndroidPrivateStorage androidPrivateStorage = storageWeakReference.get();
+        if (sStorageSoftReference == null || sStorageSoftReference.get() == null) {
+            sStorageSoftReference = new SoftReference<>(new AndroidPrivateStorage(sContextWeakReference.get(), sSecurityProvider));
+        }
+        AndroidPrivateStorage androidPrivateStorage = sStorageSoftReference.get();
         androidPrivateStorage.setEncryptionEnabled(enableEncryption());
         return androidPrivateStorage;
     }

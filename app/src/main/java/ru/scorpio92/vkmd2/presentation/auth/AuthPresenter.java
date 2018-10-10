@@ -13,6 +13,7 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
     private Disposable permissionsDisposable;
     private Observable<Boolean> rxPermissionsObservable;
     private ICookieDataSource cookieDataSource;
+    private boolean userReadAttention;
 
     public AuthPresenter(@NonNull IContract.View mView,
                          @NonNull Observable<Boolean> rxPermissionsObservable,
@@ -58,8 +59,10 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
         if (checkViewState()) {
             try {
                 getView().hideProgress();
-                getView().showAttentionDialog();
                 getView().showVkPage();
+                if (!userReadAttention) {
+                    getView().showAttentionDialog();
+                }
             } catch (Exception e) {
                 handleErrors(e);
             }
@@ -87,12 +90,17 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
 
     @Override
     public void onUserReadAttention() {
-
+        userReadAttention = true;
     }
 
     @Override
     protected void writeExceptionInLog(Throwable t) {
         Logger.error((Exception) t);
+    }
+
+    @Override
+    protected void onCustomErrorsHandle(@NonNull IContract.View view, @NonNull Exception e) {
+        view.onError(provideDefaultErrorMsg());
     }
 
     @Override

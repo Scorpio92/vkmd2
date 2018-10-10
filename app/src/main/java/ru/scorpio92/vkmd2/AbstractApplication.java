@@ -16,6 +16,6 @@ public abstract class AbstractApplication extends Application implements IAppWat
     @Override
     public void onCreate() {
         super.onCreate();
-        onInitApp(getApplicationContext());
+        onInitApp();
     }
 }
