@@ -7,7 +7,7 @@ import java.util.Map;
 
 import io.reactivex.observers.DisposableObserver;
 import ru.scorpio92.vkmd2.BuildConfig;
-import ru.scorpio92.vkmd2.domain.usecase.GetAccountTracksUsecase;
+import ru.scorpio92.vkmd2.domain.usecase.GetAccountTracksUseCase;
 import ru.scorpio92.vkmd2.presentation.old.presenter.base.AbstractPresenter;
 import ru.scorpio92.vkmd2.presentation.old.presenter.base.ISyncPresenter;
 import ru.scorpio92.vkmd2.presentation.old.view.activity.base.ISyncActivity;
@@ -17,7 +17,7 @@ import ru.scorpio92.vkmd2.tools.Logger;
 
 public class SyncPresenter extends AbstractPresenter<ISyncActivity> implements ISyncPresenter {
 
-    private GetAccountTracksUsecase usecase;
+    private GetAccountTracksUseCase usecase;
 
     public SyncPresenter(ISyncActivity view) {
         super(view);
@@ -27,7 +27,7 @@ public class SyncPresenter extends AbstractPresenter<ISyncActivity> implements I
     public void parsePageSourceCode(final String cookie, int count) {
         getView().showProgress(true);
 
-        usecase = new GetAccountTracksUsecase(cookie, count);
+        usecase = new GetAccountTracksUseCase(cookie, count);
         usecase.execute(new DisposableObserver<String>() {
             @Override
             public void onNext(String uid) {

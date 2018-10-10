@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import ru.scorpio92.vkmd2.data.entity.CachedTrack;
 import ru.scorpio92.vkmd2.data.entity.OnlineTrack;
 import ru.scorpio92.vkmd2.data.entity.Track;
+import ru.scorpio92.vkmd2.data.entity.VkTrack;
 
 public class VkmdUtils {
 
@@ -130,7 +131,7 @@ public class VkmdUtils {
         return vk_s(str, i ^ vk_id);
     }
 
-    public static List<Track> getTrackListFromPageCode(String sourceCode) {
+    public static List<ru.scorpio92.vkmd2.domain.entity.Track> getTrackListFromPageCode(String sourceCode) {
         String jString = null;
 
         Pattern p = Pattern.compile("\\[.*https.*jpg\\).*]");
@@ -139,8 +140,8 @@ public class VkmdUtils {
             jString = m.group().replaceAll("^.*cache\":", "") + "}";
         }
 
-        final List<Track> trackList = new ArrayList<>();
-        int idx = 1;
+        final List<ru.scorpio92.vkmd2.domain.entity.Track> trackList = new ArrayList<>();
+        //int idx = 1;
 
         if (jString != null) {
             try {
@@ -150,8 +151,7 @@ public class VkmdUtils {
                     JSONArray jsonTrack = JObject.getJSONArray(array.get(i).toString());
                     try {
                         String[] tmpArr = jsonTrack.getString(1).split("_");
-                        Track track = new Track();
-                        track.setId(idx);
+                        ru.scorpio92.vkmd2.domain.entity.Track track = new ru.scorpio92.vkmd2.domain.entity.Track();
                         track.setUserId(tmpArr[0]);
                         track.setTrackId(tmpArr[1]);
                         track.setArtist(jsonTrack.getString(3));
@@ -165,7 +165,7 @@ public class VkmdUtils {
                             track.setUrlImage("");
 
                         trackList.add(track);
-                        idx++;
+                        //idx++;
                     } catch (Exception e) {
                         Logger.error(e);
                     }
@@ -192,8 +192,8 @@ public class VkmdUtils {
         return null;
     }
 
-    public static List<OnlineTrack> getTrackListFromSearchPageCode(String uid, String sourceCode) throws Exception {
-        final List<OnlineTrack> trackList = new ArrayList<>();
+    public static List<ru.scorpio92.vkmd2.domain.entity.Track> getTrackListFromSearchPageCode(String uid, String sourceCode) throws Exception {
+        final List<ru.scorpio92.vkmd2.domain.entity.Track> trackList = new ArrayList<>();
 
         List<String> ids = new ArrayList<>();
         List<String> trackArtists = new ArrayList<>();
@@ -249,12 +249,12 @@ public class VkmdUtils {
             Logger.log("ST", "imageUrls.size(): " + imageUrls.size());*/
 
         int trackCount = audioUrls.size();
-        int idx = 1;
+        //int idx = 1;
 
         if (ids.size() == trackCount && trackArtists.size() == trackCount && trackNames.size() == trackCount && trackDurations.size() == trackCount) {
             for (int i = 0; i < trackCount; i++) {
-                OnlineTrack track = new OnlineTrack();
-                track.setId(idx);
+                ru.scorpio92.vkmd2.domain.entity.Track track = new ru.scorpio92.vkmd2.domain.entity.Track();
+                //track.setId(idx);
                 track.setUserId(uid);
                 track.setTrackId(ids.get(i).split("_")[1].trim());
                 track.setArtist(trackArtists.get(i));
@@ -263,7 +263,7 @@ public class VkmdUtils {
                 track.setUrlAudio(audioUrls.get(i));
 
                 trackList.add(track);
-                idx++;
+                //idx++;
             }
         }
         return trackList;

@@ -1,46 +1,39 @@
 package ru.scorpio92.vkmd2.data.repository.network;
 
+import android.support.annotation.NonNull;
 
 import java.util.List;
 
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import okhttp3.Request;
 import retrofit2.Retrofit;
-import ru.scorpio92.vkmd2.data.entity.OnlineTrack;
-import ru.scorpio92.vkmd2.data.entity.Track;
 import ru.scorpio92.vkmd2.data.repository.network.base.API;
-import ru.scorpio92.vkmd2.data.repository.network.base.IGetAudioRepo;
 import ru.scorpio92.vkmd2.data.repository.network.core.RequestInterceptor;
 import ru.scorpio92.vkmd2.data.repository.network.core.RetrofitNetworkRepository;
+import ru.scorpio92.vkmd2.domain.datasource.IVkAudioDataSource;
+import ru.scorpio92.vkmd2.domain.entity.Track;
 import ru.scorpio92.vkmd2.tools.VkmdUtils;
 
 import static ru.scorpio92.vkmd2.BuildConfig.BASE_URL;
 
-public class GetAudioRepo extends RetrofitNetworkRepository<API> implements IGetAudioRepo {
+public class VkAudioDataSource extends RetrofitNetworkRepository<API> implements IVkAudioDataSource {
 
     private String cookie;
 
-    public GetAudioRepo(String cookie) {
+    public VkAudioDataSource(@NonNull String cookie) {
         this.cookie = cookie;
     }
 
     @Override
-    public Observable<List<Track>> getAccountAudio(int offset) {
-        /*return getApiInterface().getAccountAudio(offset)
-                .flatMap(s -> Observable.just(VkmdUtils.getTrackListFromPageCode(s)));*/
-        return null;
+    public Single<List<Track>> getAccountAudio(int offset) {
+        return getApiInterface().getAccountAudio(offset)
+                .flatMap(s -> Single.just(VkmdUtils.getTrackListFromPageCode(s)));
     }
 
     @Override
-    public Observable<List<OnlineTrack>> getSearchAudio(String uid, String query) {
-        /*return getApiInterface().getSearchAudio("search", query)
-                .flatMap(s -> Observable.just(VkmdUtils.getTrackListFromSearchPageCode(uid, s)));*/
-        return null;
-    }
-
-    @Override
-    protected String provideBaseURL() {
-        return BASE_URL;
+    public Single<List<Track>> searchAudio(String uid, String query) {
+        return getApiInterface().getSearchAudio("search", query)
+                .flatMap(s -> Single.just(VkmdUtils.getTrackListFromSearchPageCode(uid, s)));
     }
 
     @Override
@@ -56,5 +49,10 @@ public class GetAudioRepo extends RetrofitNetworkRepository<API> implements IGet
                 builder.addHeader("cookie", cookie);
             }
         };
+    }
+
+    @Override
+    protected String provideBaseURL() {
+        return BASE_URL;
     }
 }

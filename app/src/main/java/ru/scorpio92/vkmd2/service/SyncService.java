@@ -11,7 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import io.reactivex.observers.DisposableObserver;
-import ru.scorpio92.vkmd2.domain.usecase.GetAccountTracksUsecase;
+import ru.scorpio92.vkmd2.domain.usecase.GetAccountTracksUseCase;
 import ru.scorpio92.vkmd2.tools.LocalStorage;
 import ru.scorpio92.vkmd2.tools.Logger;
 
@@ -50,7 +50,7 @@ public class SyncService extends Service {
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private GetAccountTracksUsecase usecase;
+    private GetAccountTracksUseCase usecase;
 
     @Nullable
     @Override
@@ -118,7 +118,7 @@ public class SyncService extends Service {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                usecase = new GetAccountTracksUsecase(cookie, finalCount);
+                usecase = new GetAccountTracksUseCase(cookie, finalCount);
                 usecase.execute(new DisposableObserver<String>() {
                     @Override
                     protected void onStart() {

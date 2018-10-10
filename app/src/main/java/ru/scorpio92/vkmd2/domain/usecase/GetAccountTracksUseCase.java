@@ -7,7 +7,7 @@ import io.reactivex.Observable;
 import ru.scorpio92.vkmd2.data.entity.Track;
 import ru.scorpio92.vkmd2.data.repository.db.base.old.AppDatabase;
 import ru.scorpio92.vkmd2.data.repository.network.GetAudioRepo;
-import ru.scorpio92.vkmd2.domain.usecase.base.RxAbstractUsecase;
+import ru.scorpio92.vkmd2.domain.base.AbstractUseCase;
 import ru.scorpio92.vkmd2.tools.Logger;
 
 import static ru.scorpio92.vkmd2.BuildConfig.GET_AUDIO_OFFSET;
@@ -16,9 +16,9 @@ import static ru.scorpio92.vkmd2.BuildConfig.GET_AUDIO_OFFSET;
 /**
  * Получение списка аудиозаписей с аккаунта пользователя
  */
-public class GetAccountTracksUsecase extends RxAbstractUsecase<String> {
+public class GetAccountTracksUseCase extends AbstractUseCase<String> {
 
-    private static final String LOG_TAG = GetAccountTracksUsecase.class.getSimpleName();
+    private static final String LOG_TAG = GetAccountTracksUseCase.class.getSimpleName();
 
     private String cookie;
     /**
@@ -26,13 +26,13 @@ public class GetAccountTracksUsecase extends RxAbstractUsecase<String> {
      */
     private int count;
 
-    public GetAccountTracksUsecase(String cookie, int count) {
+    public GetAccountTracksUseCase(String cookie, int count) {
         this.cookie = cookie;
         this.count = count;
     }
 
     @Override
-    protected Observable<String> provideObservable() {
+    public Observable<String> provideObservable() {
         return buildChain()
                 .doOnNext(tracks -> {
                     AppDatabase.getInstance().trackDAO().deleteAll();

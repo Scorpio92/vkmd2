@@ -13,24 +13,24 @@ import ru.scorpio92.vkmd2.data.entity.Track;
 @Dao
 public interface TrackDAO {
 
-    @Query("DELETE from MusicTable")
+    @Query("DELETE from VkTrack")
     void deleteAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveTrackList(List<Track> trackList);
 
-    @Query("SELECT * FROM MusicTable")
+    @Query("SELECT * FROM VkTrack")
     List<Track> getTrackList();
 
-    @Query("SELECT COUNT(*) FROM MusicTable")
+    @Query("SELECT COUNT(*) FROM VkTrack")
     int getTracksCount();
 
-    @Query("SELECT * FROM MusicTable WHERE trackId == :trackId")
+    @Query("SELECT * FROM VkTrack WHERE trackId == :trackId")
     Track getTrackByTrackId(String trackId);
 
-    @Query("SELECT * FROM MusicTable WHERE id == :position")
+    @Query("SELECT * FROM VkTrack WHERE id == :position")
     Track getTrackByPosition(int position);
 
-    @Query("SELECT trackId FROM MusicTable")
+    @Query("SELECT trackId FROM VkTrack")
     List<String> getTrackIdList();
 }
