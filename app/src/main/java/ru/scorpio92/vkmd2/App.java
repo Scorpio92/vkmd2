@@ -7,8 +7,12 @@ import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
 
 import io.fabric.sdk.android.Fabric;
-import ru.scorpio92.vkmd2.data.repository.db.base.old.AppDatabase;
+import ru.scorpio92.vkmd2.data.repository.db.base.AbstractDatabaseDataSource;
+import ru.scorpio92.vkmd2.data.repository.db.dao.AppDatabase;
 import ru.scorpio92.vkmd2.data.repository.internal.base.AbstractLocalDataSource;
+
+import static ru.scorpio92.vkmd2.BuildConfig.DB_FOLDER;
+import static ru.scorpio92.vkmd2.BuildConfig.DB_NAME;
 
 
 public class App extends AbstractApplication {
@@ -35,12 +39,12 @@ public class App extends AbstractApplication {
     @Override
     public void onInitApp() {
         AbstractLocalDataSource.initialize(getApplicationContext(), null);
-        AppDatabase.initDB(getApplicationContext());
+        AbstractDatabaseDataSource.initDatabase(getApplicationContext(), AppDatabase.class, APP_DIR + "/" + DB_FOLDER + "/" + DB_NAME);
     }
 
     @Override
     public void finishApp() {
         AbstractLocalDataSource.close();
-        AppDatabase.closeDB();
+        AbstractDatabaseDataSource.closeDatabase();
     }
 }

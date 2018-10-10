@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.data.repository.db.base.old;
+package ru.scorpio92.vkmd2.data.repository.db.dao;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
@@ -24,7 +24,7 @@ import static ru.scorpio92.vkmd2.BuildConfig.DB_NAME;
 @Database(entities = {Track.class, CachedTrack.class, OnlineTrack.class, OfflineSearchItem.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
 
-    private static AppDatabase instance;
+    /*private static AppDatabase instance;
 
     public static void initDB(Context context) {
         File dbDir = new File(APP_DIR + "/" + DB_FOLDER);
@@ -45,7 +45,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public static AppDatabase getInstance() {
         return instance;
-    }
+    }*/
 
     public abstract TrackDAO trackDAO();
 

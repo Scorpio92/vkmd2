@@ -6,10 +6,10 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
-import ru.scorpio92.vkmd2.domain.datasource.ITracksMemoryCacheDataSource;
+import ru.scorpio92.vkmd2.domain.datasource.ITrackDataSource;
 import ru.scorpio92.vkmd2.domain.entity.Track;
 
-public class TracksMemoryCacheDataSource implements ITracksMemoryCacheDataSource {
+public class TracksMemoryCacheDataSource implements ITrackDataSource.LocalInMemory {
 
     private static final SoftReference<List<Track>> sData = new SoftReference<>(new ArrayList<>());
 

@@ -10,13 +10,13 @@ import retrofit2.Retrofit;
 import ru.scorpio92.vkmd2.data.repository.network.base.API;
 import ru.scorpio92.vkmd2.data.repository.network.core.RequestInterceptor;
 import ru.scorpio92.vkmd2.data.repository.network.core.RetrofitNetworkRepository;
-import ru.scorpio92.vkmd2.domain.datasource.IVkAudioDataSource;
+import ru.scorpio92.vkmd2.domain.datasource.ITrackDataSource;
 import ru.scorpio92.vkmd2.domain.entity.Track;
 import ru.scorpio92.vkmd2.tools.VkmdUtils;
 
 import static ru.scorpio92.vkmd2.BuildConfig.BASE_URL;
 
-public class VkAudioDataSource extends RetrofitNetworkRepository<API> implements IVkAudioDataSource {
+public class VkAudioDataSource extends RetrofitNetworkRepository<API> implements ITrackDataSource.Remote {
 
     private String cookie;
 

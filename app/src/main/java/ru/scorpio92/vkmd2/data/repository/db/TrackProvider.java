@@ -8,8 +8,8 @@ import java.util.Random;
 
 import ru.scorpio92.vkmd2.data.entity.CachedTrack;
 import ru.scorpio92.vkmd2.data.entity.Track;
-import ru.scorpio92.vkmd2.data.repository.db.base.old.AppDatabase;
 import ru.scorpio92.vkmd2.data.repository.db.base.old.ITrackProvider;
+import ru.scorpio92.vkmd2.data.repository.db.dao.AppDatabase;
 import ru.scorpio92.vkmd2.tools.Logger;
 import ru.scorpio92.vkmd2.tools.VkmdUtils;
 

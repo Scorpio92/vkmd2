@@ -24,7 +24,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.data.entity.CachedTrack;
-import ru.scorpio92.vkmd2.data.repository.db.base.old.AppDatabase;
+import ru.scorpio92.vkmd2.data.repository.db.dao.AppDatabase;
 import ru.scorpio92.vkmd2.data.repository.network.DownloadAudioRepo;
 import ru.scorpio92.vkmd2.presentation.old.view.activity.DownloadManagerActivity;
 import ru.scorpio92.vkmd2.tools.Logger;
