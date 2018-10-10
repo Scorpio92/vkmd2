@@ -17,20 +17,32 @@ public class LocalStorage {
     public final static String FCM_TOKEN = ".fcm_token";
 
     public static void setDataInFile(Context context, String fileName, String data) throws Exception {
-        FileOutputStream outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-        outputStream.write(data.getBytes());
-        outputStream.close();
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            outputStream.write(data.getBytes());
+        } finally {
+            if (outputStream != null) {
+                outputStream.flush();
+                outputStream.close();
+            }
+        }
     }
 
     public static String getDataFromFile(Context context, String fileName) throws Exception {
-        FileInputStream fileInputStream = context.openFileInput(fileName);
-        int ch;
-        StringBuilder temp = new StringBuilder();
-        while ((ch = fileInputStream.read()) != -1) {
-            temp.append(Character.toString((char) ch));
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = context.openFileInput(fileName);
+            int ch;
+            StringBuilder temp = new StringBuilder();
+            while ((ch = fileInputStream.read()) != -1) {
+                temp.append(Character.toString((char) ch));
+            }
+            return temp.toString();
+        } finally {
+            if (fileInputStream != null)
+                fileInputStream.close();
         }
-        fileInputStream.close();
-        return temp.toString();
     }
 
     public static boolean fileExist(Context context, String fileName) throws Exception {

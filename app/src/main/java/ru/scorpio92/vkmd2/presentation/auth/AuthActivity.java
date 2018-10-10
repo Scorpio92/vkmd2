@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import ru.scorpio92.vkmd2.R;
+import ru.scorpio92.vkmd2.di.PresenterInjection;
 import ru.scorpio92.vkmd2.presentation.base.BaseActivity;
 import ru.scorpio92.vkmd2.presentation.old.view.activity.MusicActivity;
 import ru.scorpio92.vkmd2.presentation.old.view.activity.SyncActivity;
@@ -35,7 +36,7 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
     @Nullable
     @Override
     protected IContract.Presenter bindPresenter() {
-        return new AuthPresenter(this);
+        return PresenterInjection.provideAuthPresenter(this);
     }
 
     @Nullable
@@ -112,7 +113,8 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
 
     @Override
     public void showAttentionDialog() {
-        Dialog.getAlertDialogBuilder(getString(R.string.dialog_login_title), getString(R.string.dialog_login), this)
+        Dialog.getAlertDialogBuilder(getString(R.string.dialog_login_title),
+                getString(R.string.dialog_login), this)
                 .setPositiveButton(getString(R.string.dialog_continue), (dialog, which) -> {
                     dialog.dismiss();
                     if (checkPresenterState())
@@ -144,29 +146,30 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
         finish();
     }
 
-    private CustomWebViewClient.WebViewClientCallback webViewClientCallback = new CustomWebViewClient.WebViewClientCallback() {
-        @Override
-        public void onAuthPageLoaded() {
-            if (checkPresenterState())
-                getPresenter().onAuthPageLoaded();
-        }
+    private CustomWebViewClient.WebViewClientCallback webViewClientCallback =
+            new CustomWebViewClient.WebViewClientCallback() {
+                @Override
+                public void onAuthPageLoaded() {
+                    if (checkPresenterState())
+                        getPresenter().onAuthPageLoaded();
+                }
 
-        @Override
-        public void onPageBeginLoading() {
-            if (checkPresenterState())
-                getPresenter().onPageBeginLoading();
-        }
+                @Override
+                public void onPageBeginLoading() {
+                    if (checkPresenterState())
+                        getPresenter().onPageBeginLoading();
+                }
 
-        @Override
-        public void onCookieReady(String cookie) {
-            if (checkPresenterState())
-                getPresenter().onCookieReady(cookie);
-        }
+                @Override
+                public void onCookieReady(String cookie) {
+                    if (checkPresenterState())
+                        getPresenter().onCookieReady(cookie);
+                }
 
-        @Override
-        public void onError() {
-            if (checkPresenterState())
-                getPresenter().onError();
-        }
-    };
+                @Override
+                public void onError() {
+                    if (checkPresenterState())
+                        getPresenter().onError();
+                }
+            };
 }

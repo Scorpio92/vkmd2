@@ -1,36 +1,36 @@
 package ru.scorpio92.vkmd2.presentation.auth;
 
-import android.Manifest;
 import android.support.annotation.NonNull;
 
-import com.tbruyelle.rxpermissions2.RxPermissions;
-
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import ru.scorpio92.vkmd2.domain.datasource.ICookieDataSource;
 import ru.scorpio92.vkmd2.presentation.base.BasePresenter;
-import ru.scorpio92.vkmd2.tools.LocalStorage;
 import ru.scorpio92.vkmd2.tools.Logger;
 
 public class AuthPresenter extends BasePresenter<IContract.View> implements IContract.Presenter {
 
     private Disposable permissionsDisposable;
+    private Observable<Boolean> rxPermissionsObservable;
+    private ICookieDataSource cookieDataSource;
 
-    public AuthPresenter(@NonNull IContract.View mView) {
+    public AuthPresenter(@NonNull IContract.View mView,
+                         @NonNull Observable<Boolean> rxPermissionsObservable,
+                         @NonNull ICookieDataSource cookieDataSource) {
         super(mView);
+        this.rxPermissionsObservable = rxPermissionsObservable;
+        this.cookieDataSource = cookieDataSource;
     }
 
     @Override
     public void onPostCreate() {
         if (checkViewState())
-            permissionsDisposable = new RxPermissions(getView().getActivity())
-                    .request(Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.RECORD_AUDIO,
-                            Manifest.permission.MODIFY_AUDIO_SETTINGS)
+            permissionsDisposable = rxPermissionsObservable
                     .subscribe(granted -> {
                         if (granted) {
                             try {
                                 if (checkViewState()) {
-                                    if (LocalStorage.fileExist(getView().getViewContext(), LocalStorage.COOKIE_STORAGE)) {
+                                    if (cookieDataSource.checkCookieExists().blockingGet()) {
                                         getView().showMusicActivity();
                                     } else {
                                         getView().loadVkPage();
@@ -58,9 +58,7 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
         if (checkViewState()) {
             try {
                 getView().hideProgress();
-                if (!LocalStorage.fileExist(getView().getViewContext(), LocalStorage.LOGIN_DIALOG_FLAG)) {
-                    getView().showAttentionDialog();
-                }
+                getView().showAttentionDialog();
                 getView().showVkPage();
             } catch (Exception e) {
                 handleErrors(e);
@@ -72,7 +70,7 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
     @Override
     public void onCookieReady(String cookie) {
         try {
-            LocalStorage.setDataInFile(getView().getViewContext(), LocalStorage.COOKIE_STORAGE, cookie);
+            cookieDataSource.saveCookie(cookie).blockingAwait();
             getView().showSyncActivity();
         } catch (Exception e) {
             handleErrors(e);
@@ -89,11 +87,7 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
 
     @Override
     public void onUserReadAttention() {
-        try {
-            LocalStorage.setDataInFile(getView().getViewContext(), LocalStorage.LOGIN_DIALOG_FLAG, "");
-        } catch (Exception e) {
-            handleErrors(e);
-        }
+
     }
 
     @Override
