@@ -66,12 +66,6 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
         progress.setVisibility(View.GONE);
     }
 
-    @Nullable
-    @Override
-    public Activity getActivity() {
-        return this;
-    }
-
     @Override
     public void showProgress() {
         progress.setVisibility(View.VISIBLE);

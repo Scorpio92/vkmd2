@@ -1,6 +1,7 @@
 package ru.scorpio92.vkmd2.presentation.base;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -117,6 +118,12 @@ public abstract class BaseActivity<P extends IBasePresenter> extends AppCompatAc
     @NonNull
     @Override
     public Context getViewContext() {
+        return this;
+    }
+
+    @Nullable
+    @Override
+    public Activity getActivity() {
         return this;
     }
 
