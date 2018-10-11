@@ -1,6 +1,5 @@
 package ru.scorpio92.vkmd2.presentation.auth;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;

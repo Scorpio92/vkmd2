@@ -27,7 +27,7 @@ public class SyncPresenter extends AbstractPresenter<ISyncActivity> implements I
     public void parsePageSourceCode(final String cookie, int count) {
         getView().showProgress(true);
 
-        usecase = new GetAccountTracksUseCase(cookie, count);
+        /*usecase = new GetAccountTracksUseCase(cookie, count);
         usecase.execute(new DisposableObserver<String>() {
             @Override
             public void onNext(String uid) {
@@ -63,7 +63,7 @@ public class SyncPresenter extends AbstractPresenter<ISyncActivity> implements I
                         getView().showMusicActivity();
                 }
             }
-        });
+        });*/
     }
 
     private void sendInfoToFirestore() {

@@ -2,6 +2,7 @@ package ru.scorpio92.vkmd2.tools;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -57,4 +58,11 @@ public class ViewUtils {
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 
+    public static void startActivityAndClearStack(Context context, Class activity) {
+        if (context == null || activity == null)
+            return;
+        Intent intent = new Intent(context, activity);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+    }
 }

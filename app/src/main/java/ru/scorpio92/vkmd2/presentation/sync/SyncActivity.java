@@ -89,9 +89,9 @@ public class SyncActivity extends BaseActivity<IContract.Presenter> implements I
         if (checkPresenterState()) {
             hideSoftKeyboard(this);
             if (countEt.getText().toString().trim().isEmpty())
-                getPresenter().getTrackList(GET_AUDIO_OFFSET);
+                getPresenter().synchronize(GET_AUDIO_OFFSET);
             else
-                getPresenter().getTrackList(Integer.valueOf(countEt.getText().toString().trim()));
+                getPresenter().synchronize(Integer.valueOf(countEt.getText().toString().trim()));
         }
     }
 }

@@ -6,7 +6,7 @@ import java.io.File;
 import io.reactivex.Observable;
 import ru.scorpio92.vkmd2.App;
 import ru.scorpio92.vkmd2.BuildConfig;
-import ru.scorpio92.vkmd2.data.repository.network.UpdateRepo;
+import ru.scorpio92.vkmd2.data.datasource.network.UpdateRepo;
 import ru.scorpio92.vkmd2.domain.usecase.base.RxAbstractUsecase;
 
 public class CheckUpdateUsecase extends RxAbstractUsecase<String> {

@@ -1,29 +1,49 @@
 package ru.scorpio92.vkmd2.domain.usecase;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
-import ru.scorpio92.vkmd2.data.entity.Track;
-import ru.scorpio92.vkmd2.data.repository.db.dao.AppDatabase;
-import ru.scorpio92.vkmd2.data.repository.network.GetAudioRepo;
+import io.reactivex.observers.DisposableObserver;
 import ru.scorpio92.vkmd2.domain.base.AbstractUseCase;
-import ru.scorpio92.vkmd2.tools.Logger;
+import ru.scorpio92.vkmd2.domain.datasource.ISyncDataSource;
+import ru.scorpio92.vkmd2.domain.datasource.ITrackDataSource;
+import ru.scorpio92.vkmd2.domain.entity.Track;
 
-import static ru.scorpio92.vkmd2.BuildConfig.GET_AUDIO_OFFSET;
+import static ru.scorpio92.vkmd2.domain.base.ValidateUtils.throwIfNull;
 
 
 /**
  * Получение списка аудиозаписей с аккаунта пользователя
  */
-public class GetAccountTracksUseCase extends AbstractUseCase<String> {
+public class GetAccountTracksUseCase extends AbstractUseCase<List<Track>> {
 
-    private static final String LOG_TAG = GetAccountTracksUseCase.class.getSimpleName();
+    private ISyncDataSource syncDataSource;
+    private ITrackDataSource trackRepository;
+
+    public GetAccountTracksUseCase(ISyncDataSource syncDataSource, ITrackDataSource trackRepository) {
+        this.syncDataSource = syncDataSource;
+        this.trackRepository = trackRepository;
+    }
+
+    @Override
+    protected void checkPreconditions(DisposableObserver<List<Track>> observer) throws Exception {
+        throwIfNull(syncDataSource);
+        throwIfNull(trackRepository);
+    }
+
+    @Override
+    public Observable<List<Track>> provideObservable() throws Exception {
+        return syncDataSource.getSyncProperties().flatMapObservable(syncProperties ->
+                trackRepository.getTrackList(syncProperties.getSyncCount()).toObservable())
+                .doOnComplete(() -> syncDataSource.refreshSyncTime().blockingAwait());
+    }
+
+    /*private static final String LOG_TAG = GetAccountTracksUseCase.class.getSimpleName();
 
     private String cookie;
-    /**
+    *//**
      * требуемое кол-во аудиозаписей
-     */
+     *//*
     private int count;
 
     public GetAccountTracksUseCase(String cookie, int count) {
@@ -36,7 +56,7 @@ public class GetAccountTracksUseCase extends AbstractUseCase<String> {
         return buildChain()
                 .doOnNext(tracks -> {
                     AppDatabase.getInstance().trackDAO().deleteAll();
-                    AppDatabase.getInstance().trackDAO().saveTrackList(tracks);
+                    AppDatabase.getInstance().trackDAO().addTrackList(tracks);
                 })
                 .flatMap(tracks -> Observable.just(tracks.get(0).getUserId()))
                 .subscribeOn(provideSubscribeScheduler());
@@ -72,5 +92,5 @@ public class GetAccountTracksUseCase extends AbstractUseCase<String> {
             }
             return generalTrackList;
         });
-    }
+    }*/
 }

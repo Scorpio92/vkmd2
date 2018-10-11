@@ -101,4 +101,14 @@ public class Track {
     public boolean isSaved() {
         return status == TRACK_DOWNLOADED;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean result = false;
+        if (obj != null && obj instanceof Track) {
+            Track comparedTrack = (Track) obj;
+            result = this.trackId.equals(comparedTrack.getTrackId());
+        }
+        return result;
+    }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import ru.scorpio92.vkmd2.data.entity.CachedTrack;
 import ru.scorpio92.vkmd2.data.entity.Track;
-import ru.scorpio92.vkmd2.data.repository.db.dao.AppDatabase;
+import ru.scorpio92.vkmd2.data.datasource.db.dao.AppDatabase;
 import ru.scorpio92.vkmd2.domain.usecase.base.RxAbstractUsecase;
 
 
@@ -16,7 +16,7 @@ public class GetTrackListFromDBUsecase extends RxAbstractUsecase<List<Track>> {
 
     @Override
     protected Observable<List<Track>> provideObservable() {
-        return Observable.fromCallable(() -> {
+        /*return Observable.fromCallable(() -> {
             List<Track> trackList = AppDatabase.getInstance().trackDAO().getTrackList();
 
             for (Track track : trackList) {
@@ -27,6 +27,7 @@ public class GetTrackListFromDBUsecase extends RxAbstractUsecase<List<Track>> {
                 }
             }
             return trackList;
-        }).subscribeOn(provideSubscribeScheduler());
+        }).subscribeOn(provideSubscribeScheduler());*/
+        return null;
     }
 }

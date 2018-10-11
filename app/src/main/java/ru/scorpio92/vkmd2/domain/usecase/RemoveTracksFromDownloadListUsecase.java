@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
-import ru.scorpio92.vkmd2.data.repository.db.dao.AppDatabase;
+import ru.scorpio92.vkmd2.data.datasource.db.dao.AppDatabase;
 import ru.scorpio92.vkmd2.domain.usecase.base.RxAbstractUsecase;
 
 

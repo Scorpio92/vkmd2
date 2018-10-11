@@ -55,7 +55,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        App.finish();
+        //App.finish();
     }
 
     @Override
@@ -191,7 +191,7 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
                             }
                         })
                         .setNegativeButton(getString(R.string.dialog_close), (dialogInterface, i) -> {
-                            App.finish();
+                            //App.finish();
                             finish();
                         })
                         .setCancelable(false)

@@ -51,7 +51,7 @@ public class SyncActivity extends AbstractActivity<ISyncPresenter> implements IS
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        App.finish();
+        //App.finish();
     }
 
     @Override

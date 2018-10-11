@@ -51,7 +51,7 @@ import ru.scorpio92.vkmd2.App;
 import ru.scorpio92.vkmd2.BuildConfig;
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.data.entity.Track;
-import ru.scorpio92.vkmd2.data.repository.db.TrackProvider;
+import ru.scorpio92.vkmd2.data.datasource.db.TrackProvider;
 import ru.scorpio92.vkmd2.presentation.old.presenter.MusicPresenter;
 import ru.scorpio92.vkmd2.presentation.old.presenter.base.IMusicPresenter;
 import ru.scorpio92.vkmd2.presentation.old.view.activity.base.AbstractActivity;
@@ -205,7 +205,7 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
                 showToast("Что-то пошло не так...");
             }
 
-            App.finish();
+            //App.finish();
             finish();
         });
         builder.show();
@@ -745,7 +745,7 @@ public class MusicActivity extends AbstractActivity<IMusicPresenter> implements 
             startService(new Intent(MusicActivity.this, SyncService.class)
                     .putExtra(SyncService.SERVICE_ACTION, SyncService.ACTION.STOP.name())
             );
-            App.finish();
+            //App.finish();
             finish();
         });
         builder.show();

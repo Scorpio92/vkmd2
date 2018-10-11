@@ -3,13 +3,14 @@ package ru.scorpio92.vkmd2.domain.datasource;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import ru.scorpio92.vkmd2.domain.entity.Track;
 
 public interface ITrackDataSource {
 
-    Maybe<List<Track>> getTrackList();
+    Flowable<List<Track>> getTrackList(int count);
 
     Completable clean();
 
@@ -22,16 +23,16 @@ public interface ITrackDataSource {
 
     interface LocalDB {
 
-        Maybe<List<Track>> getSavedTrackList();
+        Flowable<List<Track>> getSavedTrackList();
 
         Completable saveTrack(Track track);
     }
 
     interface LocalInMemory {
 
-        Maybe<List<Track>> getTrackList();
+        Flowable<List<Track>> getTrackList();
 
-        Completable saveTrackList(List<Track> tracks);
+        Completable addTrackList(List<Track> tracks);
 
         Completable clean();
     }

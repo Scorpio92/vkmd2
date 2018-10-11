@@ -118,7 +118,7 @@ public class SyncService extends Service {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                usecase = new GetAccountTracksUseCase(cookie, finalCount);
+                /*usecase = new GetAccountTracksUseCase(cookie, finalCount);
                 usecase.execute(new DisposableObserver<String>() {
                     @Override
                     protected void onStart() {
@@ -148,7 +148,7 @@ public class SyncService extends Service {
                         }
                         sendBroadcastToActivity(EVENT.SYNC_FINISH);
                     }
-                });
+                });*/
             }
         }, SYNC_START_DELAY);
 

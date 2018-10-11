@@ -7,9 +7,9 @@ import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
 
 import io.fabric.sdk.android.Fabric;
-import ru.scorpio92.vkmd2.data.repository.db.base.AbstractDatabaseDataSource;
-import ru.scorpio92.vkmd2.data.repository.db.dao.AppDatabase;
-import ru.scorpio92.vkmd2.data.repository.internal.base.AbstractLocalDataSource;
+import ru.scorpio92.vkmd2.data.datasource.db.base.AbstractDatabaseDataSource;
+import ru.scorpio92.vkmd2.data.datasource.db.dao.AppDatabase;
+import ru.scorpio92.vkmd2.data.datasource.internal.base.AbstractLocalDataSource;
 
 import static ru.scorpio92.vkmd2.BuildConfig.DB_FOLDER;
 import static ru.scorpio92.vkmd2.BuildConfig.DB_NAME;
@@ -30,10 +30,6 @@ public class App extends AbstractApplication {
         LeakCanary.install(this);
         Fabric.with(this, new Crashlytics());
         MultiDex.install(getApplicationContext());
-    }
-
-    public static void finish() {
-        AppDatabase.closeDB();
     }
 
     @Override

@@ -12,6 +12,6 @@ public interface IContract {
 
     interface Presenter extends IBasePresenter {
 
-        void getTrackList(int count);
+        void synchronize(int count);
     }
 }
