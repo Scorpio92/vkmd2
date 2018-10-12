@@ -2,7 +2,10 @@ package ru.scorpio92.vkmd2.domain.entity;
 
 public class SyncProperties {
 
-    private boolean autoSync;
+    /**
+     * Признак синхронизации через экран синхронизации или сервис синхронизации
+     */
+    private boolean manualSync;
     /**
      * кол-во треков для синхронизации
      */
@@ -12,12 +15,12 @@ public class SyncProperties {
      */
     private long lastSyncTime;
 
-    public SyncProperties(boolean autoSync, int syncCount) {
-        this(autoSync, syncCount, System.currentTimeMillis());
+    public SyncProperties(boolean manualSync, int syncCount) {
+        this(manualSync, syncCount, System.currentTimeMillis());
     }
 
-    public SyncProperties(boolean autoSync, int syncCount, long lastSyncTime) {
-        this.autoSync = autoSync;
+    public SyncProperties(boolean manualSync, int syncCount, long lastSyncTime) {
+        this.manualSync = manualSync;
         this.syncCount = syncCount;
         this.lastSyncTime = lastSyncTime;
     }

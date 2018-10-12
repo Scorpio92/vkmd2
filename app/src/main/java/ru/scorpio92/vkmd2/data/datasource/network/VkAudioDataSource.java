@@ -20,18 +20,16 @@ public class VkAudioDataSource extends RetrofitNetworkRepository<API> implements
 
     private String cookie;
 
-    public VkAudioDataSource(@NonNull String cookie) {
-        this.cookie = cookie;
-    }
-
     @Override
-    public Single<List<Track>> getAccountAudio(int offset) {
+    public Single<List<Track>> getAccountAudio(String cookie, int offset) {
+        this.cookie = cookie;
         return getApiInterface().getAccountAudio(offset)
                 .flatMap(s -> Single.just(VkmdUtils.getTrackListFromPageCode(s)));
     }
 
     @Override
-    public Single<List<Track>> searchAudio(String uid, String query) {
+    public Single<List<Track>> searchAudio(String cookie, String uid, String query) {
+        this.cookie = cookie;
         return getApiInterface().getSearchAudio("search", query)
                 .flatMap(s -> Single.just(VkmdUtils.getTrackListFromSearchPageCode(uid, s)));
     }
@@ -54,5 +52,10 @@ public class VkAudioDataSource extends RetrofitNetworkRepository<API> implements
     @Override
     protected String provideBaseURL() {
         return BASE_URL;
+    }
+
+    @Override
+    protected boolean enableLogging() {
+        return false;
     }
 }

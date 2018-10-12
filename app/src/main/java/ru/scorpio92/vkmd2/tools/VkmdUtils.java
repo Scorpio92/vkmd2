@@ -167,11 +167,11 @@ public class VkmdUtils {
                         trackList.add(track);
                         //idx++;
                     } catch (Exception e) {
-                        Logger.error(e);
+                        //Logger.error(e);
                     }
                 }
             } catch (Exception e) {
-                Logger.error(e);
+                //Logger.error(e);
             }
         }
 

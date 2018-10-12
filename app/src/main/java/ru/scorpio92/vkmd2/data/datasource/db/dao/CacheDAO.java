@@ -7,6 +7,7 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import ru.scorpio92.vkmd2.data.entity.CachedTrack;
 
 
@@ -38,7 +39,7 @@ public interface CacheDAO {
     void markFileAsError(String trackId);
 
     @Query("SELECT * FROM DownloadTable WHERE status == 1")
-    List<CachedTrack> getSavedTracks();
+    Flowable<List<CachedTrack>> getSavedTracks();
 
     @Query("SELECT COUNT(*) FROM DownloadTable WHERE status == 1")
     int getSavedTracksCount();

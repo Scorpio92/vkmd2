@@ -19,7 +19,7 @@ public class GetSavedTrackListUsecase extends RxAbstractUsecase<List<Track>> {
     @Override
     protected Observable<List<Track>> provideObservable() {
         return Observable.fromCallable(() -> {
-            List<CachedTrack> cachedTrackList = AppDatabase.getInstance().cacheDAO().getSavedTracks();
+            List<CachedTrack> cachedTrackList = AppDatabase.getInstance().cacheDAO().getSavedTracks().blockingFirst();
             List<Track> trackList = new ArrayList<>();
             for (CachedTrack cachedTrack : cachedTrackList)
                 trackList.add(VkmdUtils.convertCachedTrackToBase(cachedTrack));

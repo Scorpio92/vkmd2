@@ -12,7 +12,7 @@ public class SyncDataSource extends AbstractLocalDataSource implements ISyncData
     @Override
     public Completable saveSyncCount(int count) {
         return Completable.fromAction(() -> {
-            String data = JsonWorker.getSerializeJson(new SyncProperties(false, count));
+            String data = JsonWorker.getSerializeJson(new SyncProperties(true, count));
             saveData(data);
         });
     }
@@ -22,7 +22,7 @@ public class SyncDataSource extends AbstractLocalDataSource implements ISyncData
         return getSyncProperties().flatMapCompletable(syncProperties -> {
             final int currentTrackCount = syncProperties.getSyncCount();
             return Completable.fromAction(() -> {
-                String data = JsonWorker.getSerializeJson(new SyncProperties(true, currentTrackCount));
+                String data = JsonWorker.getSerializeJson(new SyncProperties(false, currentTrackCount));
                 saveData(data);
             });
         });
