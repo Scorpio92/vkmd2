@@ -3,7 +3,7 @@ package ru.scorpio92.vkmd2.domain.entity;
 public class SyncProperties {
 
     /**
-     * Признак синхронизации через экран синхронизации или сервис синхронизации
+     * Признак синхронизации через экран синхронизации
      */
     private boolean manualSync;
     /**
@@ -23,6 +23,10 @@ public class SyncProperties {
         this.manualSync = manualSync;
         this.syncCount = syncCount;
         this.lastSyncTime = lastSyncTime;
+    }
+
+    public boolean isManualSync() {
+        return manualSync;
     }
 
     public int getSyncCount() {
