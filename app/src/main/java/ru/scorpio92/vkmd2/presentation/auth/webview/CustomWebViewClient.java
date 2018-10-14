@@ -1,7 +1,9 @@
-package ru.scorpio92.vkmd2.presentation.old.view.webview;
+package ru.scorpio92.vkmd2.presentation.auth.webview;
 
 import android.graphics.Bitmap;
 import android.webkit.CookieManager;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -14,6 +16,7 @@ import static ru.scorpio92.vkmd2.BuildConfig.LOGIN_URL;
 public class CustomWebViewClient extends WebViewClient {
 
     private WebViewClientCallback callback;
+    private boolean hasError;
 
     public interface WebViewClientCallback {
         void onPageBeginLoading();
@@ -22,7 +25,9 @@ public class CustomWebViewClient extends WebViewClient {
 
         void onCookieReady(String cookie);
 
-        void onError();
+        void onBadConnection();
+
+        void onNotAuthPageLoaded();
     }
 
     CustomWebViewClient(WebViewClientCallback callback) {
@@ -32,6 +37,7 @@ public class CustomWebViewClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
+        hasError = false;
         callback.onPageBeginLoading();
     }
 
@@ -44,18 +50,28 @@ public class CustomWebViewClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         if (callback != null) {
-            if (url.contains(LOGIN_URL) || url.equals(BASE_URL) || url.equals(BASE_URL.concat("/"))) {
-                callback.onAuthPageLoaded();
-            } else if (url.equals(AUDIO_URL) || url.equals(FEED_URL)) {
-                final String cookies = CookieManager.getInstance().getCookie(url);
-                if (cookies == null) {
-                    callback.onError();
+            if (!hasError) {
+                if (url.contains(LOGIN_URL) || url.equals(BASE_URL) || url.equals(BASE_URL.concat("/"))) {
+                    callback.onAuthPageLoaded();
+                } else if (url.equals(AUDIO_URL) || url.equals(FEED_URL)) {
+                    final String cookies = CookieManager.getInstance().getCookie(url);
+                    if (cookies == null) {
+                        callback.onBadConnection();
+                    } else {
+                        callback.onCookieReady(cookies);
+                    }
                 } else {
-                    callback.onCookieReady(cookies);
+                    callback.onNotAuthPageLoaded();
                 }
             } else {
-                callback.onError();
+                callback.onBadConnection();
             }
         }
+    }
+
+    @Override
+    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+        super.onReceivedError(view, request, error);
+        hasError = true;
     }
 }

@@ -15,12 +15,11 @@ import android.widget.ProgressBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import io.reactivex.disposables.Disposable;
-import ru.scorpio92.vkmd2.App;
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.presentation.old.view.activity.base.AbstractActivity;
 import ru.scorpio92.vkmd2.presentation.old.view.activity.base.IAuthActivity;
-import ru.scorpio92.vkmd2.presentation.old.view.webview.CustomWebView;
-import ru.scorpio92.vkmd2.presentation.old.view.webview.CustomWebViewClient;
+import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebView;
+import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebViewClient;
 import ru.scorpio92.vkmd2.tools.Dialog;
 import ru.scorpio92.vkmd2.tools.LocalStorage;
 import ru.scorpio92.vkmd2.tools.Logger;
@@ -112,14 +111,19 @@ public class AuthActivity extends AbstractActivity implements IAuthActivity {
                 LocalStorage.setDataInFile(AuthActivity.this, LocalStorage.COOKIE_STORAGE, cookie);
                 showSyncActivity(cookie);
             } catch (Exception e) {
-                onError();
+                onBadConnection();
             }
         }
 
         @Override
-        public void onError() {
+        public void onBadConnection() {
             showProgress(false);
             errorContainer.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onNotAuthPageLoaded() {
+
         }
     };
 

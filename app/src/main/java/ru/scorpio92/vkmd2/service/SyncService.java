@@ -135,7 +135,7 @@ public class SyncService extends Service {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onBadConnection(Throwable e) {
                         sendBroadcastToActivity(EVENT.SYNC_ERROR);
                     }
 

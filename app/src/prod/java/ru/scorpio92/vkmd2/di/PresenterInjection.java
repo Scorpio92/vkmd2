@@ -18,7 +18,8 @@ public class PresenterInjection {
                 new RxPermissions(view.getActivity()).request(Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.RECORD_AUDIO,
-                        Manifest.permission.MODIFY_AUDIO_SETTINGS),
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        Manifest.permission.ACCESS_NETWORK_STATE),
                 new CookieDataSource()
         );
     }

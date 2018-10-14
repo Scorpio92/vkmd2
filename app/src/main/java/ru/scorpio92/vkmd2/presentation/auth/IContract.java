@@ -2,7 +2,7 @@ package ru.scorpio92.vkmd2.presentation.auth;
 
 import ru.scorpio92.vkmd2.presentation.base.IBasePresenter;
 import ru.scorpio92.vkmd2.presentation.base.IBaseView;
-import ru.scorpio92.vkmd2.presentation.old.view.webview.CustomWebViewClient;
+import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebViewClient;
 
 public interface IContract {
 

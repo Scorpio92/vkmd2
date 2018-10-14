@@ -39,11 +39,11 @@ public class SyncPresenter extends AbstractPresenter<ISyncActivity> implements I
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onBadConnection(Throwable e) {
                 Logger.error((Exception) e);
                 if (checkViewState()) {
                     getView().showProgress(false);
-                    getView().onError();
+                    getView().onBadConnection();
                 }
             }
 

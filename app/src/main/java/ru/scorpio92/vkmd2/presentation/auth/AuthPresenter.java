@@ -4,9 +4,11 @@ import android.support.annotation.NonNull;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.domain.datasource.ICookieDataSource;
 import ru.scorpio92.vkmd2.presentation.base.BasePresenter;
 import ru.scorpio92.vkmd2.tools.Logger;
+import ru.scorpio92.vkmd2.tools.NetworkUtils;
 
 public class AuthPresenter extends BasePresenter<IContract.View> implements IContract.Presenter {
 
@@ -34,7 +36,12 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
                                     if (cookieDataSource.checkCookieExists().blockingGet()) {
                                         getView().showMusicActivity();
                                     } else {
-                                        getView().loadVkPage();
+                                        if (NetworkUtils.checkConnection(getView().getViewContext())) {
+                                            NetworkUtils.clearCookies(getView().getViewContext());
+                                            getView().loadVkPage();
+                                        } else {
+                                            onBadConnection();
+                                        }
                                     }
                                 }
                             } catch (Exception e) {
@@ -81,10 +88,18 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
     }
 
     @Override
-    public void onError() {
+    public void onBadConnection() {
         if (checkViewState()) {
             getView().hideProgress();
-            getView().onError(provideDefaultErrorMsg());
+            getView().onError(getString(R.string.error_no_connection));
+        }
+    }
+
+    @Override
+    public void onNotAuthPageLoaded() {
+        if (checkViewState()) {
+            getView().hideProgress();
+            getView().onError(getString(R.string.error_not_auth_page));
         }
     }
 

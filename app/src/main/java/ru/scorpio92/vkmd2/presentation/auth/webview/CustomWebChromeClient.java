@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.presentation.old.view.webview;
+package ru.scorpio92.vkmd2.presentation.auth.webview;
 
 
 import android.webkit.ConsoleMessage;

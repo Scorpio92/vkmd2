@@ -41,6 +41,8 @@
     <string name="error_nothing_select">А выбрать то нечего!</string>
     <string name="error_nothing_download">А качать-то нечего!</string>
     <string name="error_text">Произошла ошибка.\nПроверьте соединение с сетью Интернет</string>
+    <string name="error_no_connection">При загрузке данных произошла ошибка.\nПроверьте соединение с сетью Интернет</string>
+    <string name="error_not_auth_page">Убедитесь, что Вы пытаетесь авторизоваться (Log in)</string>
     <string name="error_download">Возник косячок при загрузке:(</string>
     <string name="error_playing">Произошла ошибка при воспроизведении</string>
     <string name="error_sync">Ошибка синхронизации аудио</string>

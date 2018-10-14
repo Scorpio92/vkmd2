@@ -5,20 +5,22 @@ import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.di.PresenterInjection;
+import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebView;
+import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebViewClient;
 import ru.scorpio92.vkmd2.presentation.base.BaseActivity;
 import ru.scorpio92.vkmd2.presentation.old.view.activity.MusicActivity;
 import ru.scorpio92.vkmd2.presentation.old.view.activity.SyncActivity;
-import ru.scorpio92.vkmd2.presentation.old.view.webview.CustomWebView;
-import ru.scorpio92.vkmd2.presentation.old.view.webview.CustomWebViewClient;
 import ru.scorpio92.vkmd2.tools.Dialog;
 
 import static ru.scorpio92.vkmd2.BuildConfig.BASE_URL;
+import static ru.scorpio92.vkmd2.tools.NetworkUtils.clearWebViewCache;
 
 
 public class AuthActivity extends BaseActivity<IContract.Presenter> implements IContract.View {
@@ -26,6 +28,7 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
     private CustomWebView webView;
     private ProgressBar progress;
     private LinearLayoutCompat errorContainer;
+    private AppCompatTextView errorText;
 
     @Override
     protected boolean retryAppInitOnCreate() {
@@ -54,10 +57,12 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
                 this, R.color.colorPrimaryDark), PorterDuff.Mode.MULTIPLY);
 
         errorContainer = findViewById(R.id.errorContainer);
+        errorText = findViewById(R.id.errorText);
 
         findViewById(R.id.retryBtn).setOnClickListener(v -> {
-            if (checkPresenterState())
+            if (checkPresenterState()) {
                 getPresenter().onPostCreate();
+            }
         });
 
         webView.setVisibility(View.GONE);
@@ -81,6 +86,7 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
     public void onError(@NonNull String error) {
         webView.setVisibility(View.GONE);
         errorContainer.setVisibility(View.VISIBLE);
+        errorText.setText(error);
     }
 
     @Override
@@ -106,6 +112,7 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
 
     @Override
     public void loadVkPage() {
+        clearWebViewCache(webView);
         webView.loadUrl(BASE_URL);
     }
 
@@ -165,9 +172,15 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
                 }
 
                 @Override
-                public void onError() {
+                public void onBadConnection() {
                     if (checkPresenterState())
-                        getPresenter().onError();
+                        getPresenter().onBadConnection();
+                }
+
+                @Override
+                public void onNotAuthPageLoaded() {
+                    if (checkPresenterState())
+                        getPresenter().onNotAuthPageLoaded();
                 }
             };
 }

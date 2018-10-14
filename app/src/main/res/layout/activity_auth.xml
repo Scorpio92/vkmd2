@@ -5,13 +5,13 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <ru.scorpio92.vkmd2.presentation.old.view.webview.CustomWebView
+    <ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
 
-    </ru.scorpio92.vkmd2.presentation.old.view.webview.CustomWebView>
+    </ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebView>
 
     <ProgressBar
         android:id="@+id/progress"
@@ -28,12 +28,13 @@
         android:visibility="visible">
 
         <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/errorText"
             style="@style/TextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dp_12"
             android:layout_marginLeft="@dimen/dp_12"
             android:layout_marginRight="@dimen/dp_12"
+            android:layout_marginBottom="@dimen/dp_12"
             android:gravity="center"
             android:text="@string/error_text" />
 
