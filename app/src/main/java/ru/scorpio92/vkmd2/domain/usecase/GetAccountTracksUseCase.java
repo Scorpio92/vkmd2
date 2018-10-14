@@ -7,6 +7,7 @@ import io.reactivex.observers.DisposableObserver;
 import ru.scorpio92.vkmd2.domain.base.AbstractUseCase;
 import ru.scorpio92.vkmd2.domain.datasource.ISyncDataSource;
 import ru.scorpio92.vkmd2.domain.datasource.ITrackDataSource;
+import ru.scorpio92.vkmd2.domain.entity.SyncProperties;
 import ru.scorpio92.vkmd2.domain.entity.Track;
 
 import static ru.scorpio92.vkmd2.domain.base.ValidateUtils.throwIfNull;
@@ -37,11 +38,18 @@ public class GetAccountTracksUseCase extends AbstractUseCase<List<Track>> {
             //если была произведена ручная синхронизация (на экране синхронизации)
             if (syncProperties.isManualSync()) {
                 //получаем готовый кэш
-                return mTrackRepository.getCachedTrackList().toObservable();
+                return mTrackRepository.getCachedTrackList()
+                        .toObservable()
+                        //если в кеше ничего нет, запускаем полный процесс
+                        .switchIfEmpty(getFromVK(syncProperties));
             } else {
                 //иначе запускаем полный процесс получения треков
-                return mTrackRepository.getTrackList(syncProperties.getSyncCount()).toObservable();
+                return getFromVK(syncProperties);
             }
         }).doOnComplete(() -> mSyncDataSource.refreshSyncTime().blockingAwait());
+    }
+
+    private Observable<List<Track>> getFromVK(SyncProperties syncProperties) {
+        return mTrackRepository.getTrackList(syncProperties.getSyncCount()).toObservable();
     }
 }
