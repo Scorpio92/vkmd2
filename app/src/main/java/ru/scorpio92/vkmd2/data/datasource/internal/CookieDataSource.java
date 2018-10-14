@@ -23,6 +23,11 @@ public class CookieDataSource extends AbstractLocalDataSource implements ICookie
     }
 
     @Override
+    public Completable clearCookie() {
+        return Completable.fromAction(this::deleteStore);
+    }
+
+    @Override
     protected String provideStoreName() {
         return ".cookie";
     }

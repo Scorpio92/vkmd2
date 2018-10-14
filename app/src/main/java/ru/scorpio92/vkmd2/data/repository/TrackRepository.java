@@ -44,8 +44,9 @@ public class TrackRepository implements ITrackDataSource {
         mCacheBackup = new ArrayList<>();
 
         return backupLocalCacheAndClean(getSavedTracksAndStartGetFromRemote(count))
+                .take(getRequestCount(count))
                 .onErrorResumeNext(this::onError)
-                .doOnComplete(mCacheBackup::clear); //чистим массив с бэкапом
+                .doOnComplete(() -> mCacheBackup.clear()); //чистим массив с бэкапом
     }
 
     @Override
@@ -107,13 +108,13 @@ public class TrackRepository implements ITrackDataSource {
         Logger.log("mergeTracksFromRemoteWithSaved");
         return Observable.fromIterable(remoteTracks)
                 .map(track -> {
-                        //если данная аудиозапись закэширована, отдаём её
-                        int idx = savedTracks.indexOf(track);
-                        if(idx > -1) {
-                            return savedTracks.get(idx);
-                        } else {
-                            //Logger.error(String.format("Track with id %s no exists in cache. Skip.", track.getTrackId()));
-                        }
+                    //если данная аудиозапись закэширована, отдаём её
+                    int idx = savedTracks.indexOf(track);
+                    if (idx > -1) {
+                        return savedTracks.get(idx);
+                    } else {
+                        //Logger.error(String.format("Track with id %s no exists in cache. Skip.", track.getTrackId()));
+                    }
                     //если нет, отдаём полученную из сети
                     return track;
                 })

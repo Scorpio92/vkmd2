@@ -8,7 +8,7 @@
 
     <string name="go">ПОГНАЛИ!</string>
     <string name="sync_text">Введите количество аудиозаписей которые хотите получить. Можно продолжить и без ввода количества</string>
-    <string name="sync_progress_text">Пожалуйста, подождите...</string>
+    <string name="sync_progress_text">Пожалуйста, подождите. Идёт получение списка аудиозаписей...</string>
 
     <string name="navigation_drawer_open">Открыто</string>
     <string name="navigation_drawer_close">Закрыто</string>

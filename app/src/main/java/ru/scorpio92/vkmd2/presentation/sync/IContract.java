@@ -7,6 +7,8 @@ public interface IContract {
 
     interface View extends IBaseView {
 
+        void updateProgressText(String text);
+
         void showMusicActivity();
     }
 

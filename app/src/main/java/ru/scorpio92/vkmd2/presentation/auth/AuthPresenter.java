@@ -120,9 +120,11 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
 
     @Override
     public void onDestroy() {
-        if (permissionsDisposable != null && !permissionsDisposable.isDisposed())
+        if (permissionsDisposable != null && !permissionsDisposable.isDisposed()) {
             permissionsDisposable.dispose();
-
+            permissionsDisposable = null;
+        }
+        rxPermissionsObservable = null;
         super.onDestroy();
     }
 }

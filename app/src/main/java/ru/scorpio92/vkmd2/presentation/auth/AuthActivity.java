@@ -16,7 +16,7 @@ import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebView;
 import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebViewClient;
 import ru.scorpio92.vkmd2.presentation.base.BaseActivity;
 import ru.scorpio92.vkmd2.presentation.old.view.activity.MusicActivity;
-import ru.scorpio92.vkmd2.presentation.old.view.activity.SyncActivity;
+import ru.scorpio92.vkmd2.presentation.sync.SyncActivity;
 import ru.scorpio92.vkmd2.tools.Dialog;
 
 import static ru.scorpio92.vkmd2.BuildConfig.BASE_URL;

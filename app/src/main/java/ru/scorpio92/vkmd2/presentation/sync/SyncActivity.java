@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -19,6 +20,7 @@ import static ru.scorpio92.vkmd2.tools.ViewUtils.hideSoftKeyboard;
 public class SyncActivity extends BaseActivity<IContract.Presenter> implements IContract.View {
 
     private LinearLayoutCompat mainContainer, errorContainer, progressContainer;
+    private AppCompatTextView progressText;
     private AppCompatEditText countEt;
 
     @Nullable
@@ -48,6 +50,7 @@ public class SyncActivity extends BaseActivity<IContract.Presenter> implements I
         findViewById(R.id.goBtn).setOnClickListener(v -> getAudio());
 
         progressContainer = findViewById(R.id.progressContainer);
+        progressText = findViewById(R.id.progressText);
 
         errorContainer = findViewById(R.id.errorContainer);
         findViewById(R.id.retryBtn).setOnClickListener(v -> getAudio());
@@ -77,6 +80,11 @@ public class SyncActivity extends BaseActivity<IContract.Presenter> implements I
     @Override
     public void onBackPressed() {
         finishApp();
+    }
+
+    @Override
+    public void updateProgressText(String text) {
+        progressText.setText(text);
     }
 
     @Override

@@ -10,4 +10,6 @@ public interface ICookieDataSource {
     Completable saveCookie(String cookie);
 
     Single<String> getCookie();
+
+    Completable clearCookie();
 }
