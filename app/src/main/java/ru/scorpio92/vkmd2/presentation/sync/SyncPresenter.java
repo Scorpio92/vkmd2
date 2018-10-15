@@ -60,7 +60,7 @@ public class SyncPresenter extends BasePresenter<IContract.View> implements ICon
             public void onComplete() {
                 if (checkViewState()) {
                     getView().hideProgress();
-                    getView().showMusicActivity();
+                    getView().showMainActivity();
                 }
             }
         });

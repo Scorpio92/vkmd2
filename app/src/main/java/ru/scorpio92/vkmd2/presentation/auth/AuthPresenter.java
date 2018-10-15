@@ -34,7 +34,7 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
                             try {
                                 if (checkViewState()) {
                                     if (cookieDataSource.checkCookieExists().blockingGet()) {
-                                        getView().showMusicActivity();
+                                        getView().showMainActivity();
                                     } else {
                                         if (NetworkUtils.checkConnection(getView().getViewContext())) {
                                             NetworkUtils.clearCookies(getView().getViewContext());

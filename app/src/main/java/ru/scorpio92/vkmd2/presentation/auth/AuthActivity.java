@@ -15,7 +15,7 @@ import ru.scorpio92.vkmd2.di.PresenterInjection;
 import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebView;
 import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebViewClient;
 import ru.scorpio92.vkmd2.presentation.base.BaseActivity;
-import ru.scorpio92.vkmd2.presentation.old.view.activity.MusicActivity;
+import ru.scorpio92.vkmd2.presentation.main.MainActivity;
 import ru.scorpio92.vkmd2.presentation.sync.SyncActivity;
 import ru.scorpio92.vkmd2.tools.Dialog;
 
@@ -146,8 +146,8 @@ public class AuthActivity extends BaseActivity<IContract.Presenter> implements I
     }
 
     @Override
-    public void showMusicActivity() {
-        startActivity(new Intent(this, MusicActivity.class));
+    public void showMainActivity() {
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 

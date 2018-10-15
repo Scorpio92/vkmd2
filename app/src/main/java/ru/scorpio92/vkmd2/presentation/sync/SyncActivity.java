@@ -12,7 +12,7 @@ import android.view.inputmethod.EditorInfo;
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.di.PresenterInjection;
 import ru.scorpio92.vkmd2.presentation.base.BaseActivity;
-import ru.scorpio92.vkmd2.presentation.old.view.activity.MusicActivity;
+import ru.scorpio92.vkmd2.presentation.main.MainActivity;
 
 import static ru.scorpio92.vkmd2.BuildConfig.GET_AUDIO_OFFSET;
 import static ru.scorpio92.vkmd2.tools.ViewUtils.hideSoftKeyboard;
@@ -88,8 +88,8 @@ public class SyncActivity extends BaseActivity<IContract.Presenter> implements I
     }
 
     @Override
-    public void showMusicActivity() {
-        startActivity(new Intent(this, MusicActivity.class));
+    public void showMainActivity() {
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 

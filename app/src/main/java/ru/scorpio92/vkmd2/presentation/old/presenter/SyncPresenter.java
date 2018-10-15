@@ -60,7 +60,7 @@ public class SyncPresenter extends AbstractPresenter<ISyncActivity> implements I
                     if (BuildConfig.SAVE_FMC_TOKEN)
                         sendInfoToFirestore();
                     else
-                        getView().showMusicActivity();
+                        getView().showMainActivity();
                 }
             }
         });*/

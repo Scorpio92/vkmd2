@@ -36,7 +36,7 @@ public interface IContract {
         /**
          * Показать главную активность
          */
-        void showMusicActivity();
+        void showMainActivity();
     }
 
     interface Presenter extends IBasePresenter, CustomWebViewClient.WebViewClientCallback {
