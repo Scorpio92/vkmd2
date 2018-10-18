@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 import io.reactivex.observers.DisposableObserver;
+import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.domain.entity.Track;
 import ru.scorpio92.vkmd2.domain.usecase.GetAccountTracksUseCase;
 import ru.scorpio92.vkmd2.presentation.base.BasePresenter;
@@ -40,7 +41,11 @@ public class TrackListPresenter extends BasePresenter<IContract.View> implements
             @Override
             public void onNext(List<Track> trackList) {
                 if (checkViewState()) {
-                    getView().renderTrackList(TrackConverter.convertTrackListToUiTrackList(trackList));
+                    if(trackList.isEmpty()) {
+                        getView().onError(getString(R.string.fragment_tracklist_error_no_tracks));
+                    } else {
+                        getView().renderTrackList(TrackConverter.convertTrackListToUiTrackList(trackList));
+                    }
                 }
             }
 
@@ -70,7 +75,7 @@ public class TrackListPresenter extends BasePresenter<IContract.View> implements
 
     @Override
     protected void onCustomErrorsHandle(@NonNull IContract.View view, @NonNull Exception e) {
-        super.onCustomErrorsHandle(view, e);
+        view.onError(getString(R.string.fragment_tracklist_error_no_tracks));
     }
 
     @Override

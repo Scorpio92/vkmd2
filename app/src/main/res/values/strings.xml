@@ -84,4 +84,9 @@
 
     <string name="default_notification_channel_id">vkmd2_push_channel</string>
 
+
+
+    <string name="fragment_player_error_no_tracks">Не получен трек для воспроизведения</string>
+    <string name="fragment_tracklist_error_no_tracks">Не удалось получить список аудиозаписей</string>
+
 </resources>

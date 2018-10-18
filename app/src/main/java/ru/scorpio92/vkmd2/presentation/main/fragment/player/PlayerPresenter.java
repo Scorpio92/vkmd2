@@ -6,8 +6,15 @@ import ru.scorpio92.vkmd2.presentation.base.BasePresenter;
 
 public class PlayerPresenter extends BasePresenter<IContract.View> implements IContract.Presenter {
 
-    PlayerPresenter(@NonNull IContract.View mView) {
+    public PlayerPresenter(@NonNull IContract.View mView) {
         super(mView);
+    }
+
+    @Override
+    public void onPostCreate() {
+        if(checkViewState()) {
+            getView().showProgress();
+        }
     }
 
     @Override

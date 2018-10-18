@@ -4,8 +4,10 @@ import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -15,6 +17,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import ru.scorpio92.vkmd2.R;
+import ru.scorpio92.vkmd2.di.PresenterInjection;
 import ru.scorpio92.vkmd2.domain.entity.Track;
 import ru.scorpio92.vkmd2.presentation.base.BaseFragment;
 import ru.scorpio92.vkmd2.tools.DateUtils;
@@ -22,7 +25,9 @@ import ru.scorpio92.vkmd2.tools.ViewUtils;
 
 public class PlayerFragment extends BaseFragment<IContract.Presenter> implements IContract.View {
 
-    private AppCompatTextView trackName, artist, currentTime, durationTime;
+    private SwipeRefreshLayout srl;
+    private LinearLayoutCompat container;
+    private AppCompatTextView trackName, artist, currentTime, durationTime, error;
     private ProgressBar progress;
     private ImageView trackImage;
     private AppCompatSeekBar playProgressIndicator;
@@ -30,10 +35,13 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
     private ImageButton play;
     private ImageButton random;
 
+    private int selectedColor;
+    private int unselectedColor;
+
     @Nullable
     @Override
     protected IContract.Presenter bindPresenter() {
-        return new PlayerPresenter(this);
+        return PresenterInjection.providePlayerPresenter(this);
     }
 
     @Nullable
@@ -44,6 +52,10 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
 
     @Override
     protected void initUI(@NonNull View view) {
+        srl = view.findViewById(R.id.srl);
+
+        container = view.findViewById(R.id.container);
+
         trackName = view.findViewById(R.id.trackName);
         artist = view.findViewById(R.id.artist);
 
@@ -93,24 +105,45 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
                 getPresenter().onRandomPressed();
             }
         });
+
+        error = view.findViewById(R.id.error);
+
+        selectedColor = getResources().getColor(R.color.colorPrimaryDark);
+        unselectedColor = getResources().getColor(android.R.color.black);
     }
 
     @Override
     public void showProgress() {
+        srl.setRefreshing(true);
+        srl.setEnabled(true);
+        container.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideProgress() {
+        srl.setRefreshing(false);
+        srl.setEnabled(false);
+        container.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onError(@NonNull String errorText) {
+        container.setVisibility(View.GONE);
+        error.setVisibility(View.VISIBLE);
+        error.setText(errorText);
+    }
+
+    @Override
+    public void onTrackLoading() {
         trackImage.setVisibility(View.GONE);
         progress.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideProgress() {
+    public void onTrackLoadingComplete() {
         setDefaultTrackArt();
         trackImage.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onError(@NonNull String error) {
-        ViewUtils.showToast(getContext(), error);
     }
 
     @Override
@@ -124,11 +157,42 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
     }
 
     @Override
-    public void onTrackRefresh(Track track) {
+    public void onTrackRefresh(@NonNull Track track) {
         trackName.setText(track.getName());
         artist.setText(track.getArtist());
 
-        String imageUrl = track.getUrlImage();
+        loadTrackArtAsync(track.getUrlImage());
+
+        playProgressIndicator.setProgress(0);
+        playProgressIndicator.setMax(track.getDuration() * 1000);
+
+        currentTime.setText(DateUtils.getHumanTimeFromMilliseconds(0));
+        durationTime.setText(DateUtils.getHumanTimeFromMilliseconds(track.getDuration() * 1000));
+
+        onPlay();
+    }
+
+    @Override
+    public void onLoopEnabled(boolean enabled) {
+        loop.setColorFilter(enabled ? selectedColor : unselectedColor);
+    }
+
+    @Override
+    public void onRandomEnabled(boolean enabled) {
+        random.setColorFilter(enabled ? selectedColor : unselectedColor);
+    }
+
+    @Override
+    public void showToast(@NonNull String error) {
+        ViewUtils.showToast(getContext(), error);
+    }
+
+    private void setDefaultTrackArt() {
+        trackImage.setScaleType(ImageView.ScaleType.CENTER);
+        trackImage.setImageResource(R.mipmap.note);
+    }
+
+    private void loadTrackArtAsync(String imageUrl) {
         if (getContext() != null && imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.with(getContext())
                     .load(imageUrl)
@@ -146,36 +210,5 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
         } else {
             setDefaultTrackArt();
         }
-
-        playProgressIndicator.setProgress(0);
-        playProgressIndicator.setMax(track.getDuration() * 1000);
-
-        currentTime.setText(DateUtils.getHumanTimeFromMilliseconds(0));
-        durationTime.setText(DateUtils.getHumanTimeFromMilliseconds(track.getDuration() * 1000));
-
-        onPlay();
-    }
-
-    @Override
-    public void onLoopEnabled(boolean enabled) {
-        if (enabled) {
-            loop.setColorFilter(getResources().getColor(R.color.colorPrimaryDark));
-        } else {
-            loop.setColorFilter(getResources().getColor(android.R.color.black));
-        }
-    }
-
-    @Override
-    public void onRandomEnabled(boolean enabled) {
-        if (enabled) {
-            random.setColorFilter(getResources().getColor(R.color.colorPrimaryDark));
-        } else {
-            random.setColorFilter(getResources().getColor(android.R.color.black));
-        }
-    }
-
-    private void setDefaultTrackArt() {
-        trackImage.setScaleType(ImageView.ScaleType.CENTER);
-        trackImage.setImageResource(R.mipmap.note);
     }
 }
