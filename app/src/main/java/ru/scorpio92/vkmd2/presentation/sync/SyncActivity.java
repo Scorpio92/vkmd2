@@ -12,7 +12,7 @@ import android.view.inputmethod.EditorInfo;
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.di.PresenterInjection;
 import ru.scorpio92.vkmd2.presentation.base.BaseActivity;
-import ru.scorpio92.vkmd2.presentation.main.MainActivity;
+import ru.scorpio92.vkmd2.presentation.main.activity.MainActivity;
 
 import static ru.scorpio92.vkmd2.BuildConfig.GET_AUDIO_OFFSET;
 import static ru.scorpio92.vkmd2.tools.ViewUtils.hideSoftKeyboard;

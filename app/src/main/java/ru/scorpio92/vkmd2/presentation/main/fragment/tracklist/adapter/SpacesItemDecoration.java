@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.presentation.main.tracklist.adapter;
+package ru.scorpio92.vkmd2.presentation.main.fragment.tracklist.adapter;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

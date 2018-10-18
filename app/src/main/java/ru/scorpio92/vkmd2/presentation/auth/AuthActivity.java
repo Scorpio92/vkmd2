@@ -15,7 +15,7 @@ import ru.scorpio92.vkmd2.di.PresenterInjection;
 import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebView;
 import ru.scorpio92.vkmd2.presentation.auth.webview.CustomWebViewClient;
 import ru.scorpio92.vkmd2.presentation.base.BaseActivity;
-import ru.scorpio92.vkmd2.presentation.main.MainActivity;
+import ru.scorpio92.vkmd2.presentation.main.activity.MainActivity;
 import ru.scorpio92.vkmd2.presentation.sync.SyncActivity;
 import ru.scorpio92.vkmd2.tools.Dialog;
 

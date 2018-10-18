@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.presentation.main.player;
+package ru.scorpio92.vkmd2.presentation.main.fragment.player;
 
 import ru.scorpio92.vkmd2.domain.entity.Track;
 import ru.scorpio92.vkmd2.presentation.base.IBasePresenter;

@@ -8,9 +8,9 @@
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@android:color/white"
         android:orientation="vertical"
-        android:padding="@dimen/dp_12">
+        android:padding="@dimen/dp_16">
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/trackName"
@@ -22,7 +22,6 @@
             android:fontFamily="sans-serif-medium"
             android:maxLines="1"
             android:text="track name"
-            android:textColor="@android:color/white"
             android:textSize="@dimen/sp_16" />
 
         <android.support.v7.widget.AppCompatTextView
@@ -33,10 +32,15 @@
             android:ellipsize="end"
             android:fontFamily="sans-serif-light"
             android:maxLines="1"
-            android:text="artist"
-            android:textColor="@android:color/white" />
+            android:text="artist" />
 
     </android.support.v7.widget.LinearLayoutCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginBottom="@dimen/dp_12"
+        android:background="@color/colorPrimary" />
 
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"

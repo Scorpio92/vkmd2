@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.presentation.main.player;
+package ru.scorpio92.vkmd2.presentation.main.fragment.player;
 
 import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;

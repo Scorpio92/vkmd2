@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.presentation.main.tracklist;
+package ru.scorpio92.vkmd2.presentation.main.fragment.tracklist;
 
 import android.support.annotation.NonNull;
 

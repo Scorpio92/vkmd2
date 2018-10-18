@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.presentation.main.tracklist;
+package ru.scorpio92.vkmd2.presentation.main.fragment.tracklist;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,8 +14,8 @@ import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.di.PresenterInjection;
 import ru.scorpio92.vkmd2.presentation.base.BaseFragment;
 import ru.scorpio92.vkmd2.presentation.entity.UiTrack;
-import ru.scorpio92.vkmd2.presentation.main.tracklist.adapter.SpacesItemDecoration;
-import ru.scorpio92.vkmd2.presentation.main.tracklist.adapter.TrackListAdapter;
+import ru.scorpio92.vkmd2.presentation.main.fragment.tracklist.adapter.SpacesItemDecoration;
+import ru.scorpio92.vkmd2.presentation.main.fragment.tracklist.adapter.TrackListAdapter;
 
 public class TrackListFragment extends BaseFragment<IContract.Presenter> implements IContract.View {
 
