@@ -6,6 +6,8 @@ import android.support.multidex.MultiDex;
 import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
 
+import java.io.File;
+
 import io.fabric.sdk.android.Fabric;
 import ru.scorpio92.vkmd2.data.datasource.db.base.AbstractDatabaseDataSource;
 import ru.scorpio92.vkmd2.data.datasource.db.dao.AppDatabase;
@@ -35,6 +37,9 @@ public class App extends AbstractApplication {
     @Override
     public void onInitApp() {
         AbstractLocalDataSource.initialize(getApplicationContext(), null);
+
+        File dbDir = new File(APP_DIR + "/" + DB_FOLDER);
+        if (!dbDir.exists()) dbDir.mkdirs();
         AbstractDatabaseDataSource.initDatabase(getApplicationContext(), AppDatabase.class, APP_DIR + "/" + DB_FOLDER + "/" + DB_NAME);
     }
 
