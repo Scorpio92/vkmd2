@@ -2,9 +2,15 @@ package ru.scorpio92.vkmd2.presentation.main.fragment.player;
 
 import android.support.annotation.NonNull;
 
+import ru.scorpio92.vkmd2.domain.datasource.IBroadcastReceiver;
+import ru.scorpio92.vkmd2.domain.datasource.IBroadcastSender;
 import ru.scorpio92.vkmd2.presentation.base.BasePresenter;
+import ru.scorpio92.vkmd2.service.base.AudioServiceContract;
 
 public class PlayerPresenter extends BasePresenter<IContract.View> implements IContract.Presenter {
+
+    private IBroadcastSender broadcastSender;
+    private IBroadcastReceiver broadcastReceiver;
 
     public PlayerPresenter(@NonNull IContract.View mView) {
         super(mView);
@@ -19,7 +25,7 @@ public class PlayerPresenter extends BasePresenter<IContract.View> implements IC
 
     @Override
     public void previous() {
-
+        broadcastSender.sendBroadcastEvent(AudioServiceContract.SenderEvent.PREV.name());
     }
 
     @Override
