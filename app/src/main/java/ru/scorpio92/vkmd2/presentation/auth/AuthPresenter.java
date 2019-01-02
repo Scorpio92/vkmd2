@@ -2,57 +2,51 @@ package ru.scorpio92.vkmd2.presentation.auth;
 
 import android.support.annotation.NonNull;
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
 import ru.scorpio92.vkmd2.R;
-import ru.scorpio92.vkmd2.domain.datasource.ICookieDataSource;
+import ru.scorpio92.vkmd2.domain.entity.AuthInfo;
+import ru.scorpio92.vkmd2.domain.usecase.GetAuthInfoUseCase;
+import ru.scorpio92.vkmd2.domain.usecase.SaveCookieUseCase;
+import ru.scorpio92.vkmd2.domain.usecase.base.CompletableObserver;
+import ru.scorpio92.vkmd2.domain.usecase.base.SingleObserver;
 import ru.scorpio92.vkmd2.presentation.base.BasePresenter;
 import ru.scorpio92.vkmd2.tools.Logger;
-import ru.scorpio92.vkmd2.tools.NetworkUtils;
 
 public class AuthPresenter extends BasePresenter<IContract.View> implements IContract.Presenter {
 
-    private Disposable permissionsDisposable;
-    private Observable<Boolean> rxPermissionsObservable;
-    private ICookieDataSource cookieDataSource;
+    private GetAuthInfoUseCase getAuthInfoUseCase;
+    private SaveCookieUseCase saveCookieUseCase;
     private boolean userReadAttention;
 
-    public AuthPresenter(@NonNull IContract.View mView,
-                         @NonNull Observable<Boolean> rxPermissionsObservable,
-                         @NonNull ICookieDataSource cookieDataSource) {
+    public AuthPresenter(@NonNull IContract.View mView, GetAuthInfoUseCase getAuthInfoUseCase,
+                         SaveCookieUseCase saveCookieUseCase) {
         super(mView);
-        this.rxPermissionsObservable = rxPermissionsObservable;
-        this.cookieDataSource = cookieDataSource;
+        this.getAuthInfoUseCase = getAuthInfoUseCase;
+        this.saveCookieUseCase = saveCookieUseCase;
     }
 
     @Override
     public void onPostCreate() {
-        if (checkViewState())
-            permissionsDisposable = rxPermissionsObservable
-                    .subscribe(granted -> {
-                        if (granted) {
-                            try {
-                                if (checkViewState()) {
-                                    if (cookieDataSource.checkCookieExists().blockingGet()) {
-                                        getView().showMainActivity();
-                                    } else {
-                                        if (NetworkUtils.checkConnection(getView().getViewContext())) {
-                                            NetworkUtils.clearCookies(getView().getViewContext());
-                                            getView().loadVkPage();
-                                        } else {
-                                            onBadConnection();
-                                        }
-                                    }
-                                }
-                            } catch (Exception e) {
-                                if (checkViewState())
-                                    handleErrors(e);
-                            }
+        getAuthInfoUseCase.execute(new SingleObserver<AuthInfo>() {
+            @Override
+            public void onNext(AuthInfo authInfo) {
+                if (checkViewState()) {
+                    if (authInfo.isPermissionsGranted()) {
+                        if (authInfo.isUserIsAuthorized()) {
+                            getView().showMainActivity();
                         } else {
-                            if (checkViewState())
-                                getView().onPermissionNotGranted();
+                            getView().loadVkPage();
                         }
-                    });
+                    } else {
+                        getView().onPermissionNotGranted();
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                handleErrors(e);
+            }
+        });
     }
 
     @Override
@@ -79,12 +73,19 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
 
     @Override
     public void onCookieReady(String cookie) {
-        try {
-            cookieDataSource.saveCookie(cookie).blockingAwait();
-            getView().showSyncActivity();
-        } catch (Exception e) {
-            handleErrors(e);
-        }
+        saveCookieUseCase.execute(cookie, new CompletableObserver() {
+            @Override
+            public void onError(Throwable e) {
+                handleErrors(e);
+            }
+
+            @Override
+            public void onComplete() {
+                if (checkViewState()) {
+                    getView().showSyncActivity();
+                }
+            }
+        });
     }
 
     @Override
@@ -120,11 +121,12 @@ public class AuthPresenter extends BasePresenter<IContract.View> implements ICon
 
     @Override
     public void onDestroy() {
-        if (permissionsDisposable != null && !permissionsDisposable.isDisposed()) {
-            permissionsDisposable.dispose();
-            permissionsDisposable = null;
+        if (getAuthInfoUseCase != null) {
+            getAuthInfoUseCase.cancel();
         }
-        rxPermissionsObservable = null;
+        if (saveCookieUseCase != null) {
+            saveCookieUseCase.cancel();
+        }
         super.onDestroy();
     }
 }
