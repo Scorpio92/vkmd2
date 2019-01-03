@@ -1,33 +1,28 @@
 package ru.scorpio92.vkmd2.service.base;
 
-public class AudioServiceContract {
+public abstract class AudioServiceContract {
 
     public static final String AUDIO_SERVICE_BROADCAST = "BROADCAST.AUDIO_SERVICE";
 
     public enum SenderEvent {
-        GET_INFO,
-        LOOP_FEATURE,
-        RANDOM_FEATURE,
-        PLAY,
-        PAUSE,
-        PLAY_OR_PAUSE,
-        STOP,
-        NEXT,
-        PREV,
-        SEEK_TO
+        GET_CURRENT_TRACK, //получить информацию по текущему треку
+        LOOP_FEATURE_CHECKED, //нажата кнопка Loop
+        RANDOM_FEATURE_CHECKED, //нажата кнопка Random
+        PLAY_OR_PAUSE, //нажата кнопка Play или Pause
+        NEXT, //нажата кнопка Next
+        PREV, //нажата кнопка Previous
+        SEEK_TO //пользователь нажал на перемотку
     }
 
     public enum ReceiverEvent {
-        PROVIDE_INFO,
+        TRACK_UPDATE, //информация по треку при его смене/проигрывании, либо запросе на инициализации
         LOOP_ENABLED,
         LOOP_DISABLED,
         RANDOM_ENABLED,
         RANDOM_DISABLED,
-        PREPARE_FOR_PLAY, //AUDIO_TRACK_NAME_PARAM, AUDIO_TRACK_ARTIST_PARAM, AUDIO_TRACK_DURATION_PARAM
-        START_PLAY,
-        PROGRESS_UPDATE, //AUDIO_TRACK_PROGRESS_PARAM
+        PLAY,
         PAUSE,
-        STOP_SERVICE,
-        ERROR
+        PLAYER_STOPPED, //плеер остановлен (например, из уведомления)
+        ERROR //возникла ошибка при проигрывании
     }
 }

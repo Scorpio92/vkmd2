@@ -14,7 +14,7 @@ public class BroadcastSender implements IBroadcastSender {
     private WeakReference<Context> contextWeakReference;
     private String action;
 
-    private BroadcastSender(Context context, String action) {
+    public BroadcastSender(Context context, String action) {
         this.contextWeakReference = new WeakReference<>(context);
         this.action = action;
     }

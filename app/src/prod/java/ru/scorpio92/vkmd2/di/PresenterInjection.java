@@ -8,6 +8,7 @@ import ru.scorpio92.vkmd2.presentation.main.fragment.player.PlayerPresenter;
 import ru.scorpio92.vkmd2.presentation.main.fragment.search.SearchPresenter;
 import ru.scorpio92.vkmd2.presentation.main.fragment.tracklist.TrackListPresenter;
 import ru.scorpio92.vkmd2.presentation.sync.SyncPresenter;
+import ru.scorpio92.vkmd2.service.base.AudioServiceContract;
 
 public class PresenterInjection {
 
@@ -24,7 +25,11 @@ public class PresenterInjection {
     }
 
     public static PlayerPresenter providePlayerPresenter(@NonNull ru.scorpio92.vkmd2.presentation.main.fragment.player.IContract.View view) {
-        return new PlayerPresenter(view);
+        return new PlayerPresenter(
+                view,
+                DataSourceInjection.provideBroadcastSender(view.getViewContext(), AudioServiceContract.AUDIO_SERVICE_BROADCAST),
+                DataSourceInjection.provideBroadcastReceiver(view.getViewContext(), AudioServiceContract.AUDIO_SERVICE_BROADCAST)
+        );
     }
 
     public static TrackListPresenter provideTrackListPresenter(@NonNull ru.scorpio92.vkmd2.presentation.main.fragment.tracklist.IContract.View view) {

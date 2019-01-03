@@ -60,7 +60,6 @@ public class MainActivity extends BaseActivity implements IFragmentListener {
             drawer.closeDrawer(GravityCompat.START);
         } else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
         } else {
             showExitDialog();
         }

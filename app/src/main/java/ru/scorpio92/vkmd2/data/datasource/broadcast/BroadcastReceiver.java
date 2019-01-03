@@ -17,7 +17,7 @@ public class BroadcastReceiver implements IBroadcastReceiver {
     private String action;
     private Listener listener;
 
-    private BroadcastReceiver(Context context, String action) {
+    public BroadcastReceiver(Context context, String action) {
         this.contextWeakReference = new WeakReference<>(context);
         this.action = action;
     }

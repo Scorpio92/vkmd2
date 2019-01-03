@@ -11,12 +11,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
 import ru.scorpio92.vkmd2.R;
 import ru.scorpio92.vkmd2.di.PresenterInjection;
-import ru.scorpio92.vkmd2.domain.entity.Track;
+import ru.scorpio92.vkmd2.domain.entity.TrackInfo;
 import ru.scorpio92.vkmd2.presentation.base.BaseFragment;
 import ru.scorpio92.vkmd2.tools.DateUtils;
 import ru.scorpio92.vkmd2.tools.ViewUtils;
@@ -117,28 +114,24 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
 
     @Override
     public void onPlay() {
-        play.setImageResource(R.mipmap.play);
-    }
-
-    @Override
-    public void onPauseTrack() {
         play.setImageResource(R.mipmap.pause);
     }
 
     @Override
-    public void onTrackRefresh(@NonNull Track track) {
-        trackName.setText(track.getName());
-        artist.setText(track.getArtist());
+    public void onPauseTrack() {
+        play.setImageResource(R.mipmap.play);
+    }
 
-        loadTrackArtAsync(track.getUrlImage());
+    @Override
+    public void onTrackRefresh(@NonNull TrackInfo trackInfo) {
+        trackName.setText(trackInfo.getName());
+        artist.setText(trackInfo.getArtist());
 
-        playProgressIndicator.setProgress(0);
-        playProgressIndicator.setMax(track.getDuration() * 1000);
+        playProgressIndicator.setProgress(trackInfo.getCurrentPosition());
+        playProgressIndicator.setMax(trackInfo.getDuration());
 
-        currentTime.setText(DateUtils.getHumanTimeFromMilliseconds(0));
-        durationTime.setText(DateUtils.getHumanTimeFromMilliseconds(track.getDuration() * 1000));
-
-        onPlay();
+        currentTime.setText(DateUtils.getHumanTimeFromMilliseconds(trackInfo.getCurrentPosition()));
+        durationTime.setText(DateUtils.getHumanTimeFromMilliseconds(trackInfo.getDuration()));
     }
 
     @Override
@@ -152,8 +145,13 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
     }
 
     @Override
-    public void showToast(@NonNull String error) {
-        ViewUtils.showToast(getContext(), error);
+    public void onStopPlaying() {
+
+    }
+
+    @Override
+    public void showToast(@NonNull String message) {
+        ViewUtils.showToast(getContext(), message);
     }
 
     private void setDefaultTrackArt() {
@@ -161,7 +159,7 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
         trackImage.setImageResource(R.mipmap.note);
     }
 
-    private void loadTrackArtAsync(String imageUrl) {
+    /*private void loadTrackArtAsync(String imageUrl) {
         if (getContext() != null && imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.with(getContext())
                     .load(imageUrl)
@@ -179,5 +177,5 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
         } else {
             setDefaultTrackArt();
         }
-    }
+    }*/
 }
