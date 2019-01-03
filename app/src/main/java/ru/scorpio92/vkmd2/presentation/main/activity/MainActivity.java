@@ -2,6 +2,7 @@ package ru.scorpio92.vkmd2.presentation.main.activity;
 
 import android.content.res.ColorStateList;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -12,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 
 import ru.scorpio92.vkmd2.BuildConfig;
@@ -30,15 +32,7 @@ public class MainActivity extends BaseActivity implements IFragmentListener {
     }
 
     private DrawerLayout drawer;
-    private ActionBarDrawerToggle toggle;
-    private Toolbar toolbar;
-    private ViewPager viewPager;
-    private PageAdapter pageAdapter;
-
-    /**
-     * Первый таб (плеер) был проинициализирован
-     */
-    //private boolean playerTabWasInit;
+    private BottomSheetBehavior bottomSheetBehavior;
 
     @Nullable
     @Override
@@ -48,7 +42,31 @@ public class MainActivity extends BaseActivity implements IFragmentListener {
 
     @Override
     protected void initUI() {
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        initToolbar(toolbar);
+        initDrawerLayout(toolbar);
+        initMainContent();
+        initPlayerBottomSheet();
+    }
+
+    @Override
+    public void onFragmentResult(int resultCode, @Nullable Object data) {
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+        } else {
+            showExitDialog();
+        }
+    }
+
+    private void initToolbar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             final ActionBar ab = getSupportActionBar();
@@ -57,63 +75,11 @@ public class MainActivity extends BaseActivity implements IFragmentListener {
             ab.setDisplayShowCustomEnabled(true);
             ab.setDisplayShowTitleEnabled(false);
         }
-
-        initDrawerLayout();
-
-        viewPager = findViewById(R.id.viewPager);
-        pageAdapter = new PageAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(pageAdapter);
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.setupWithViewPager(viewPager);
-
-        ViewUtils.replaceFragment(getSupportFragmentManager(), R.id.playerContainer, new PlayerFragment());
     }
 
-    @Override
-    public void onFragmentResult(int resultCode, @Nullable Object data) {
-        /*if (!playerTabWasInit) {
-            PlayerFragment playerFragment = null;
-            try {
-                playerFragment = (PlayerFragment) pageAdapter.getFragment(viewPager, 0);
-            } catch (Exception e) {
-                Logger.error(e);
-            }
-            switch (resultCode) {
-                case FragmentResult.TRACK_LIST_UPDATE:
-                    try {
-                        Track track = (Track) data;
-                        if (playerFragment != null && track != null) {
-                            playerFragment.hideProgress();
-                            playerFragment.onTrackLoadingComplete();
-                            playerFragment.onTrackRefresh(track);
-                            playerTabWasInit = true;
-                        }
-                    } catch (Exception e) {
-                        Logger.error(e);
-                    }
-                    break;
-                case FragmentResult.TRACK_LIST_LOADING_ERROR:
-                    if (playerFragment != null) {
-                        playerFragment.hideProgress();
-                        playerFragment.onError(getString(R.string.fragment_player_error_no_tracks));
-                    }
-                    break;
-            }
-        }*/
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else if (toggle.isDrawerIndicatorEnabled()) {
-            showExitDialog();
-        }
-    }
-
-    private void initDrawerLayout() {
+    private void initDrawerLayout(Toolbar toolbar) {
         drawer = findViewById(R.id.drawer_layout);
-        toggle = new ActionBarDrawerToggle(
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         drawer.addDrawerListener(toggle);
@@ -150,12 +116,27 @@ public class MainActivity extends BaseActivity implements IFragmentListener {
         title.setText(getString(R.string.title).concat(" v").concat(BuildConfig.VERSION_NAME));
     }
 
+    private void initMainContent() {
+        ViewPager viewPager = findViewById(R.id.viewPager);
+        PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pageAdapter);
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void initPlayerBottomSheet() {
+        LinearLayoutCompat llBottomSheet = findViewById(R.id.playerBottomSheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
+        bottomSheetBehavior.setHideable(true);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        ViewUtils.replaceFragment(getSupportFragmentManager(), R.id.playerContainer, new PlayerFragment());
+    }
+
     private void showExitDialog() {
         AlertDialog.Builder builder = Dialog.getAlertDialogBuilder(getString(R.string.dialog_title), getString(R.string.dialog_exit), this);
         builder.setNegativeButton(getString(R.string.dialog_no), (dialog, which) -> dialog.dismiss());
-        builder.setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> {
-            finishApp();
-        });
+        builder.setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> finishApp());
         builder.show();
     }
 }
