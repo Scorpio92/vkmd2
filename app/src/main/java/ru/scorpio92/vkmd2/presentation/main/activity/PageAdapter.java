@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
-import ru.scorpio92.vkmd2.presentation.main.fragment.player.PlayerFragment;
+import ru.scorpio92.vkmd2.presentation.main.fragment.search.SearchFragment;
 import ru.scorpio92.vkmd2.presentation.main.fragment.tracklist.TrackListFragment;
 
 public class PageAdapter extends FragmentPagerAdapter {
@@ -22,9 +22,9 @@ public class PageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int i) {
         switch (i) {
             case 0:
-                return new PlayerFragment();
-            case 1:
                 return new TrackListFragment();
+            case 1:
+                return new SearchFragment();
             default:
                 throw new IllegalArgumentException("unknown fragment");
         }
@@ -40,9 +40,9 @@ public class PageAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Сейчас играет";
-            case 1:
                 return "Мои аудиозаписи";
+            case 1:
+                return "Онлайн поиск";
             default:
                 throw new IllegalArgumentException("unknown fragment");
         }

@@ -4,10 +4,8 @@ import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -25,9 +23,7 @@ import ru.scorpio92.vkmd2.tools.ViewUtils;
 
 public class PlayerFragment extends BaseFragment<IContract.Presenter> implements IContract.View {
 
-    private SwipeRefreshLayout srl;
-    private LinearLayoutCompat container;
-    private AppCompatTextView trackName, artist, currentTime, durationTime, error;
+    private AppCompatTextView trackName, artist, currentTime, durationTime;
     private ProgressBar progress;
     private ImageView trackImage;
     private AppCompatSeekBar playProgressIndicator;
@@ -52,10 +48,6 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
 
     @Override
     protected void initUI(@NonNull View view) {
-        srl = view.findViewById(R.id.srl);
-
-        container = view.findViewById(R.id.container);
-
         trackName = view.findViewById(R.id.trackName);
         artist = view.findViewById(R.id.artist);
 
@@ -106,31 +98,8 @@ public class PlayerFragment extends BaseFragment<IContract.Presenter> implements
             }
         });
 
-        error = view.findViewById(R.id.error);
-
         selectedColor = getResources().getColor(R.color.colorPrimaryDark);
         unselectedColor = getResources().getColor(android.R.color.black);
-    }
-
-    @Override
-    public void showProgress() {
-        srl.setRefreshing(true);
-        srl.setEnabled(true);
-        container.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void hideProgress() {
-        srl.setRefreshing(false);
-        srl.setEnabled(false);
-        container.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onError(@NonNull String errorText) {
-        container.setVisibility(View.GONE);
-        error.setVisibility(View.VISIBLE);
-        error.setText(errorText);
     }
 
     @Override

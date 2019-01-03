@@ -16,12 +16,11 @@ import android.support.v7.widget.Toolbar;
 
 import ru.scorpio92.vkmd2.BuildConfig;
 import ru.scorpio92.vkmd2.R;
-import ru.scorpio92.vkmd2.domain.entity.Track;
 import ru.scorpio92.vkmd2.presentation.base.BaseActivity;
 import ru.scorpio92.vkmd2.presentation.base.IFragmentListener;
 import ru.scorpio92.vkmd2.presentation.main.fragment.player.PlayerFragment;
 import ru.scorpio92.vkmd2.tools.Dialog;
-import ru.scorpio92.vkmd2.tools.Logger;
+import ru.scorpio92.vkmd2.tools.ViewUtils;
 
 public class MainActivity extends BaseActivity implements IFragmentListener {
 
@@ -39,7 +38,7 @@ public class MainActivity extends BaseActivity implements IFragmentListener {
     /**
      * Первый таб (плеер) был проинициализирован
      */
-    private boolean playerTabWasInit;
+    //private boolean playerTabWasInit;
 
     @Nullable
     @Override
@@ -66,11 +65,13 @@ public class MainActivity extends BaseActivity implements IFragmentListener {
         viewPager.setAdapter(pageAdapter);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
+
+        ViewUtils.replaceFragment(getSupportFragmentManager(), R.id.playerContainer, new PlayerFragment());
     }
 
     @Override
     public void onFragmentResult(int resultCode, @Nullable Object data) {
-        if (!playerTabWasInit) {
+        /*if (!playerTabWasInit) {
             PlayerFragment playerFragment = null;
             try {
                 playerFragment = (PlayerFragment) pageAdapter.getFragment(viewPager, 0);
@@ -98,7 +99,7 @@ public class MainActivity extends BaseActivity implements IFragmentListener {
                     }
                     break;
             }
-        }
+        }*/
     }
 
     @Override
