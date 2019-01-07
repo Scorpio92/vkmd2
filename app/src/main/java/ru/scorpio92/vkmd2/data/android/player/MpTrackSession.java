@@ -7,6 +7,7 @@ import java.util.List;
  * 1) текущем проигрываемом треке
  * 2) текущих настройках плеера
  * 3) текущей позиции трека (сколько времени проиграно)
+ * 4) проигрывается трек в данный момент или нет
  */
 public class MpTrackSession {
 
@@ -15,41 +16,31 @@ public class MpTrackSession {
     private int trackCurrentPosition;
     private boolean isPlaying;
 
-    private MpTrackSession(List<MpFeature> features) {
+    private MpTrackSession(MpTrack track, List<MpFeature> features) {
+        this.track = track;
         this.features = features;
         this.trackCurrentPosition = 0;
         this.isPlaying = false;
     }
 
-    public MpTrackSession create(List<MpFeature> features) {
-        return new MpTrackSession(features);
+    public static MpTrackSession create(MpTrack track, List<MpFeature> features) {
+        return new MpTrackSession(track, features);
     }
 
-    public synchronized void setTrack(MpTrack track) {
-        this.track = track;
+    public synchronized void update(List<MpFeature> features) {
+        this.features = features;
     }
 
-    public synchronized void setTrackCurrentPosition(int trackCurrentPosition) {
+    public synchronized void update(int trackCurrentPosition, boolean isPlaying) {
         this.trackCurrentPosition = trackCurrentPosition;
+        this.isPlaying = isPlaying;
     }
 
-    public synchronized void setPlaying(boolean playing) {
-        isPlaying = playing;
-    }
-
-    public void changeFeatureEnabled(int featureId, boolean enabled) {
-        for (MpFeature feature : features) {
-            if(featureId == feature.getId()) {
-                feature.setEnabled(enabled);
-            }
-        }
-    }
-
-    public synchronized MpTrack getTrack() {
+    public MpTrack getTrack() {
         return track;
     }
 
-    public List<MpFeature> getFeatures() {
+    public synchronized List<MpFeature> getFeatures() {
         return features;
     }
 
