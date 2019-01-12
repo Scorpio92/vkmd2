@@ -5,15 +5,6 @@ package ru.scorpio92.vkmd2.data.android.player.base;
  */
 public class MpFeature {
 
-    /**
-     * зацикленное проигрываение текущего трека
-     */
-    public static int FEATURE_LOOP = 0;
-    /**
-     * рандомное проигрывание списка
-     */
-    public static int FEATURE_RANDOM = 1;
-
     private int id;
     private boolean enabled;
 
@@ -32,5 +23,19 @@ public class MpFeature {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+
+        if(obj instanceof MpFeature) {
+            MpFeature feature = (MpFeature) obj;
+            return feature.getId() == this.getId();
+        } else {
+            return false;
+        }
     }
 }

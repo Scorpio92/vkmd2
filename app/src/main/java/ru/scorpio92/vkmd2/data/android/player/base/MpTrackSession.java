@@ -1,7 +1,5 @@
 package ru.scorpio92.vkmd2.data.android.player.base;
 
-import java.util.List;
-
 /**
  * Сущность медиа-сессии предоставляющая информацию о:
  * 1) текущем проигрываемом треке
@@ -12,23 +10,23 @@ import java.util.List;
 public class MpTrackSession {
 
     private MpTrack track;
-    private List<MpFeature> features;
+    private MpSettings mpSettings;
     private int trackCurrentPosition;
     private boolean isPlaying;
 
-    private MpTrackSession(MpTrack track, List<MpFeature> features) {
+    private MpTrackSession(MpTrack track, MpSettings mpSettings) {
         this.track = track;
-        this.features = features;
+        this.mpSettings = mpSettings;
         this.trackCurrentPosition = 0;
         this.isPlaying = false;
     }
 
-    public static MpTrackSession create(MpTrack track, List<MpFeature> features) {
-        return new MpTrackSession(track, features);
+    public static MpTrackSession create(MpTrack track, MpSettings mpSettings) {
+        return new MpTrackSession(track, mpSettings);
     }
 
-    public synchronized void update(List<MpFeature> features) {
-        this.features = features;
+    public synchronized void update(MpSettings mpSettings) {
+        this.mpSettings = mpSettings;
     }
 
     public synchronized void update(int trackCurrentPosition, boolean isPlaying) {
@@ -40,8 +38,8 @@ public class MpTrackSession {
         return track;
     }
 
-    public synchronized List<MpFeature> getFeatures() {
-        return features;
+    public synchronized MpSettings getFeatures() {
+        return mpSettings;
     }
 
     public synchronized int getTrackCurrentPosition() {
