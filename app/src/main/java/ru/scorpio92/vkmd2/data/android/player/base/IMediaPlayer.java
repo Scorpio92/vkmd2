@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.data.android.player;
+package ru.scorpio92.vkmd2.data.android.player.base;
 
 /**
  * Интерфейс для реализации посредника между реализацией стандартного Android MP и сервиса для

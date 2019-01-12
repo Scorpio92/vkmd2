@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.data.android.player;
+package ru.scorpio92.vkmd2.data.android.player.base;
 
 /**
  * Сущность музыкальной композиции

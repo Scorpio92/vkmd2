@@ -1,4 +1,4 @@
-package ru.scorpio92.vkmd2.data.android.player;
+package ru.scorpio92.vkmd2.data.android.player.base;
 
 /**
  * Интерфейс для реализации аудиоплеера
@@ -17,14 +17,14 @@ public interface ILegacyPlayer {
     void start(String trackURI);
 
     /**
-     * следующий трек
+     * приостановить воспроизведение
      */
-    void toNext();
+    void pause();
 
     /**
-     * предыдущий трек
+     * продолжить воспроизведение
      */
-    void toPrevious();
+    void resume();
 
     /**
      * перемотать на определённое кол-во мс
